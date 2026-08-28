@@ -20,5 +20,4 @@ export async function setActiveSeasonAction(seasonId: string) {
   await repo.setActiveSeason(seasonId);
   revalidatePath("/admin/seasons");
   revalidatePath("/standings");
-  revalidatePath("/tv/standings");
 }

@@ -107,6 +107,4 @@ export async function saveScoresAction(leagueNightId: string, formData: FormData
   await repo.saveScores(leagueNightId, scores);
   revalidatePath(`/admin/leagues/${leagueNightId}`);
   revalidatePath("/standings");
-  revalidatePath("/tv/leaderboard");
-  revalidatePath("/tv/standings");
 }

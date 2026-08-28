@@ -4,13 +4,11 @@ import { getCurrentProfile } from "@/lib/auth";
 import { isDemoMode } from "@/lib/data";
 
 const LINKS = [
-  { href: "/", label: "Home" },
   { href: "/admin", label: "Overview" },
   { href: "/admin/members", label: "Members" },
   { href: "/admin/leagues", label: "League nights" },
   { href: "/admin/prizes", label: "Prizes" },
   { href: "/admin/seasons", label: "Seasons" },
-  { href: "/tv/leaderboard", label: "Studio TV" },
   { href: "/dashboard", label: "Member view" },
 ];
 
