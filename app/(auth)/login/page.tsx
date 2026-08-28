@@ -5,8 +5,10 @@ import { LoginForm } from "@/components/login-form";
 import { isDemoMode } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
-export default function LoginPage() {
+export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const demo = isDemoMode();
+  const nextParam = (await searchParams).next;
+  const next = typeof nextParam === "string" && nextParam.startsWith("/") ? nextParam : "/dashboard";
 
   return (
     <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-16">
@@ -30,7 +32,7 @@ export default function LoginPage() {
               </Link>
             </div>
           ) : (
-            <LoginForm />
+            <LoginForm next={next} />
           )}
         </CardContent>
       </Card>
