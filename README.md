@@ -2,8 +2,8 @@
 
 A league dashboard for Anytime Golf's indoor Trackman simulator studio: player registration and
 payment, handicaps, weekly scores, standings, prizes/winners, and handicap-balanced foursomes for
-Tuesday/Thursday league nights. Built for two very different screens — the 48" OLED TVs around the
-studio (`/tv/*`, kiosk mode) and everyone's phone (`/dashboard`, `/standings`, responsive).
+Tuesday/Thursday league nights. Responsive for phones; the standings/dashboard views can be
+AirPlayed or opened in a smart-TV browser for in-studio display.
 
 ## Stack
 
@@ -36,20 +36,23 @@ Copy `.env.example` to `.env.local` and fill in:
 ### 1. Supabase
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. In the SQL Editor, run `supabase/migrations/0001_init.sql` — this creates all tables, RLS
-   policies, and a starter "Fall 2026 League" season.
+2. In the SQL Editor, run the migrations in order: `supabase/migrations/0001_init.sql`,
+   `0002_auth_linking.sql`, `0003_password_signup.sql` — these create all tables, RLS policies,
+   the auth triggers, and a starter "Fall 2026 League" season.
 3. Copy **Project Settings → API → Project URL / anon public key / service_role key** into
    `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.
-4. Sign in once through `/login` (magic link) with the email you (or Coach Ryan) will use as
-   admin, then in the SQL editor promote that user to admin:
+4. **Authentication → Sign In / Providers → Email**: enable the Email provider, "Confirm email",
+   and "Allow new users to sign up". **Authentication → URL Configuration**: set the Site URL and
+   add your deploy domain + `http://localhost:8218/**` to the redirect allow-list.
+5. Create an account through `/signup` with the email you (or Coach Ryan) will use as admin, then
+   in the SQL editor promote that user to admin:
    ```sql
-   insert into profiles (id, role, full_name)
-   values ('<your-auth-user-uuid-from-the-auth.users-table>', 'admin', 'Coach Ryan')
-   on conflict (id) do update set role = 'admin';
+   update profiles set role = 'admin'
+   where id = (select id from auth.users where email = 'you@example.com');
    ```
-5. For each real member, add them from `/admin/members`, then link their `members.profile_id` to
-   their `auth.users.id` once they've signed in (SQL editor, or a future self-serve "claim your
-   profile" flow) so they can see their own dashboard/registrations.
+6. Players self-register at `/signup`; the `handle_new_user` trigger creates their `profiles` and
+   `members` rows and links them by email, so a member the coach pre-adds in `/admin/members` is
+   auto-claimed when that person signs up with the same email.
 
 ### 2. Stripe
 
@@ -72,9 +75,6 @@ port — the fixed `8218` port is only used by the local `npm run dev` / `npm st
 - `/dashboard`, `/leagues/[id]`, `/standings` — member-facing, responsive (mobile-first)
 - `/admin/*` — Coach Ryan's console: members, league nights, registrations/payments, group
   generation, score entry, prizes, seasons. Gated to `profiles.role = 'admin'`.
-- `/tv/leaderboard`, `/tv/groups`, `/tv/standings` — public, unauthenticated, true-black
-  fullscreen kiosk views meant to be set as the studio TV browsers' homepage. They poll for fresh
-  data every 20–30s so posted scores show up without anyone touching the screen.
 - `lib/grouping.ts` — snake-seed handicap balancing for foursomes
 - `lib/handicap.ts` — rolling handicap recalculation after each night's scores are posted
 - `lib/scoring.ts` — position → points and season standings aggregation

@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
-import { LoginForm } from "@/components/login-form";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { LoginForm } from "@/components/auth/login-form";
+import { DemoShortcuts } from "@/components/auth/demo-shortcuts";
 import { isDemoMode } from "@/lib/data";
-import { cn } from "@/lib/utils";
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const demo = isDemoMode();
@@ -11,31 +10,28 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const next = typeof nextParam === "string" && nextParam.startsWith("/") ? nextParam : "/dashboard";
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-16">
-      <Card>
-        <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>
-            {demo
-              ? "Demo mode is active — no Supabase project is connected yet, so there's nothing to sign into."
-              : "We'll email you a magic link, no password needed."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {demo ? (
-            <div className="flex flex-col gap-2">
-              <Link href="/dashboard" className={cn(buttonVariants({ variant: "primary" }))}>
-                Continue to demo dashboard
+    <AuthShell
+      heading="Sign in"
+      sub={demo ? undefined : "Welcome back to Anytime Golf League Night."}
+      footer={
+        !demo && (
+          <div className="flex flex-col gap-1">
+            <span>
+              New here?{" "}
+              <Link href="/signup" className="text-brand hover:underline">
+                Create an account
               </Link>
-              <Link href="/admin" className={cn(buttonVariants({ variant: "secondary" }))}>
-                Continue to demo admin console
+            </span>
+            <span>
+              <Link href="/forgot-email" className="text-muted hover:text-foreground">
+                Forgot which email you used?
               </Link>
-            </div>
-          ) : (
-            <LoginForm next={next} />
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            </span>
+          </div>
+        )
+      }
+    >
+      {demo ? <DemoShortcuts /> : <LoginForm next={next} />}
+    </AuthShell>
   );
 }
