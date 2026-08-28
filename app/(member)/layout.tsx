@@ -2,8 +2,10 @@ import { SiteHeader } from "@/components/site-header";
 import { isDemoMode } from "@/lib/data";
 
 const LINKS = [
+  { href: "/", label: "Home" },
   { href: "/dashboard", label: "Dashboard" },
   { href: "/standings", label: "Standings" },
+  { href: "/tv/leaderboard", label: "Studio TV" },
   { href: "/admin", label: "Coach console" },
 ];
 
