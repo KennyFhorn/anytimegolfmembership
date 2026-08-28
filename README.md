@@ -1,2 +1,89 @@
-# anytimegolfmembership
-Member Night Management App
+# Anytime Golf — League Night Management App
+
+A league dashboard for Anytime Golf's indoor Trackman simulator studio: player registration and
+payment, handicaps, weekly scores, standings, prizes/winners, and handicap-balanced foursomes for
+Tuesday/Thursday league nights. Built for two very different screens — the 48" OLED TVs around the
+studio (`/tv/*`, kiosk mode) and everyone's phone (`/dashboard`, `/standings`, responsive).
+
+## Stack
+
+- Next.js 16 (App Router) + TypeScript + Tailwind CSS
+- Supabase (Postgres + Auth + RLS) for data and login
+- Stripe Checkout for league night signup fees
+- Deployed on Vercel
+
+## Running locally
+
+```bash
+npm install
+npm run dev
+```
+
+The app runs on **http://localhost:8218** (see `package.json`).
+
+### Demo mode (no setup required)
+
+Without any environment variables set, the app runs entirely on an in-memory sample dataset
+(~20 members, a completed night with scores/groups/prizes, an upcoming night open for
+registration). Every page is fully click-through-able — admin console, member dashboard, and TV
+displays — so you can see the whole app before connecting real services. A "Demo mode" badge
+appears in the header whenever this is active. Demo data resets whenever the dev server restarts.
+
+## Connecting real services
+
+Copy `.env.example` to `.env.local` and fill in:
+
+### 1. Supabase
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. In the SQL Editor, run `supabase/migrations/0001_init.sql` — this creates all tables, RLS
+   policies, and a starter "Fall 2026 League" season.
+3. Copy **Project Settings → API → Project URL / anon public key / service_role key** into
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.
+4. Sign in once through `/login` (magic link) with the email you (or Coach Ryan) will use as
+   admin, then in the SQL editor promote that user to admin:
+   ```sql
+   insert into profiles (id, role, full_name)
+   values ('<your-auth-user-uuid-from-the-auth.users-table>', 'admin', 'Coach Ryan')
+   on conflict (id) do update set role = 'admin';
+   ```
+5. For each real member, add them from `/admin/members`, then link their `members.profile_id` to
+   their `auth.users.id` once they've signed in (SQL editor, or a future self-serve "claim your
+   profile" flow) so they can see their own dashboard/registrations.
+
+### 2. Stripe
+
+1. Grab test-mode keys from the [Stripe dashboard](https://dashboard.stripe.com/apikeys) →
+   `STRIPE_SECRET_KEY`.
+2. Add a webhook endpoint pointing at `https://<your-domain>/api/stripe/webhook` for the
+   `checkout.session.completed` event, and put its signing secret in `STRIPE_WEBHOOK_SECRET`.
+3. Without Stripe keys configured, the "Register & pay" flow still works end-to-end — it simulates
+   an instant successful payment so you can test registration → payment → grouping without a real
+   Stripe account.
+
+### 3. Deploying to Vercel
+
+Push this repo to GitHub and import it in Vercel, then set the same environment variables from
+`.env.example` in the Vercel project settings. `npm run build` / `next start` don't hard-code the
+port — the fixed `8218` port is only used by the local `npm run dev` / `npm start` scripts.
+
+## App structure
+
+- `/dashboard`, `/leagues/[id]`, `/standings` — member-facing, responsive (mobile-first)
+- `/admin/*` — Coach Ryan's console: members, league nights, registrations/payments, group
+  generation, score entry, prizes, seasons. Gated to `profiles.role = 'admin'`.
+- `/tv/leaderboard`, `/tv/groups`, `/tv/standings` — public, unauthenticated, true-black
+  fullscreen kiosk views meant to be set as the studio TV browsers' homepage. They poll for fresh
+  data every 20–30s so posted scores show up without anyone touching the screen.
+- `lib/grouping.ts` — snake-seed handicap balancing for foursomes
+- `lib/handicap.ts` — rolling handicap recalculation after each night's scores are posted
+- `lib/scoring.ts` — position → points and season standings aggregation
+- `lib/data/` — repository interface with a Supabase-backed implementation and the in-memory demo
+  implementation described above
+
+## Known gaps / next steps
+
+- Manual group edits are a two-player swap (select A, select B); no drag-and-drop yet.
+- No email/SMS notifications.
+- Member-to-auth-user linking is admin-managed via SQL for now (see step 5 above) — a self-serve
+  "claim your profile" page would remove that manual step.
