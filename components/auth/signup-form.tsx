@@ -108,7 +108,7 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <FormSection title="Your name">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="First name" htmlFor="firstName">
             <Input
               id="firstName"
@@ -133,7 +133,7 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
       </FormSection>
 
       <FormSection title="Personal">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label={`Birthdate${age !== null ? ` — age ${age}` : ""}`} htmlFor="birthdate">
             <Input
               id="birthdate"
@@ -158,7 +158,7 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
       </FormSection>
 
       <FormSection title="Golf">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Starting handicap" htmlFor="handicapIndex">
             <Input
               id="handicapIndex"
@@ -197,7 +197,7 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
             onChange={(e) => setEmail(e.target.value)}
           />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Phone" htmlFor="phone">
             <Input
               id="phone"
@@ -222,7 +222,7 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
       </FormSection>
 
       <FormSection title="Emergency contact">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Name" htmlFor="emergencyContactName">
             <Input
               id="emergencyContactName"

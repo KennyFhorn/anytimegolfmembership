@@ -26,18 +26,36 @@ export interface Tile {
 
 /**
  * A jar-of-candy grid of big square nav tiles — the app's primary way to get
- * around once you're signed in. Each tile is a soft pastel so the whole grid
- * reads at a glance without turning into a wall of saturated color; text and
- * icons are always a dark, high-contrast color on top — never white-on-color
- * and never a dark/black tile (including the disabled state).
+ * around once you're signed in. Each tile is its own punchy candy color so
+ * the whole grid pops at a glance; text and icons are always a dark,
+ * high-contrast color on top — never white-on-color and never a dark/black
+ * tile (including the disabled state).
  */
-export function TileGrid({ tiles }: { tiles: Tile[] }) {
+export function TileGrid({ tiles, heading }: { tiles: Tile[]; heading?: string }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-      {tiles.map((tile) => (
-        <TileCard key={tile.href + tile.label} tile={tile} />
-      ))}
+    <div className="flex flex-col gap-3">
+      {heading && <h2 className="text-xs font-semibold uppercase tracking-wide text-muted">{heading}</h2>}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+        {tiles.map((tile) => (
+          <TileCard key={tile.href + tile.label} tile={tile} />
+        ))}
+      </div>
     </div>
+  );
+}
+
+/** A small candy-colored icon badge, for accenting an otherwise plain card
+ * header with the same palette the tile grid uses. */
+export function IconChip({ color, children }: { color: CandyColor; children: React.ReactNode }) {
+  return (
+    <span
+      className={cn(
+        "flex h-9 w-9 items-center justify-center rounded-lg text-tile-foreground",
+        CANDY_COLORS[color],
+      )}
+    >
+      {children}
+    </span>
   );
 }
 

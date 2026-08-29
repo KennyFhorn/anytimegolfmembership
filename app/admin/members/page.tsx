@@ -1,11 +1,12 @@
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/ui/table";
 import { getRepository } from "@/lib/data";
-import { formatDate } from "@/lib/utils";
-import { createMemberAction, toggleMemberActiveAction, updateHandicapAction } from "./actions";
+import { cn, formatDate } from "@/lib/utils";
+import { createMemberAction, toggleMemberActiveAction } from "./actions";
 
 export default async function AdminMembersPage() {
   const repo = await getRepository();
@@ -125,32 +126,26 @@ export default async function AdminMembersPage() {
                       "—"
                     )}
                   </TableCell>
-                  <TableCell>
-                    <form action={updateHandicapAction} className="flex items-center gap-2">
-                      <input type="hidden" name="memberId" value={member.id} />
-                      <Input
-                        name="handicapIndex"
-                        type="number"
-                        step="0.1"
-                        defaultValue={member.handicapIndex}
-                        className="h-8 w-20"
-                      />
-                      <Button type="submit" size="sm" variant="secondary">
-                        Save
-                      </Button>
-                    </form>
-                  </TableCell>
+                  <TableCell className="text-muted">{member.handicapIndex.toFixed(1)}</TableCell>
                   <TableCell>
                     <Badge variant={member.active ? "success" : "default"}>
                       {member.active ? "Active" : "Inactive"}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <form action={toggleMemberActiveAction.bind(null, member.id, !member.active)}>
-                      <Button type="submit" size="sm" variant="ghost">
-                        {member.active ? "Deactivate" : "Reactivate"}
-                      </Button>
-                    </form>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/admin/members/${member.id}`}
+                        className={cn(buttonVariants({ size: "sm", variant: "secondary" }))}
+                      >
+                        Edit
+                      </Link>
+                      <form action={toggleMemberActiveAction.bind(null, member.id, !member.active)}>
+                        <Button type="submit" size="sm" variant="ghost">
+                          {member.active ? "Deactivate" : "Reactivate"}
+                        </Button>
+                      </form>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

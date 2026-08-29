@@ -1,9 +1,18 @@
 import Link from "next/link";
-import { Calendar, Flag, History, Trophy, Users } from "lucide-react";
+import {
+  Calendar,
+  CalendarRange,
+  Flag,
+  Gift,
+  History,
+  LayoutDashboard,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { TileGrid, type Tile } from "@/components/tile-grid";
+import { IconChip, TileGrid, type Tile } from "@/components/tile-grid";
 import { getRepository } from "@/lib/data";
 import { getCurrentProfile } from "@/lib/auth";
 import { cn, formatCents, formatDate } from "@/lib/utils";
@@ -26,21 +35,28 @@ export default async function DashboardPage() {
 
   const myGroup = me ? groups.find((g) => g.memberIds.includes(me.id)) : undefined;
   const myStanding = me ? standings.find((s) => s.memberId === me.id) : undefined;
+  const isAdmin = profile?.role === "admin";
 
-  // Just the member-facing destinations — Coach console links already live in
-  // the navbar dropdown, so they aren't repeated here.
-  const tiles: Tile[] = [
+  const memberTiles: Tile[] = [
     { href: "/standings", label: "Standings", icon: Trophy, color: "yellow" },
     nextNight
       ? { href: `/leagues/${nextNight.id}`, label: "This week", sublabel: formatDate(nextNight.date), icon: Flag, color: "green" }
       : { href: "#", label: "This week", sublabel: "No night scheduled", icon: Flag, color: "green", disabled: true },
     { href: "/history", label: "History", icon: History, color: "purple" },
   ];
+  const coachTiles: Tile[] = [
+    { href: "/admin", label: "Overview", icon: LayoutDashboard, color: "blue" },
+    { href: "/admin/members", label: "Members", icon: Users, color: "pink" },
+    { href: "/admin/leagues", label: "League nights", icon: Calendar, color: "orange" },
+    { href: "/admin/prizes", label: "Prizes", icon: Gift, color: "teal" },
+    { href: "/admin/seasons", label: "Seasons", icon: CalendarRange, color: "red" },
+  ];
 
   if (!me) {
     return (
       <div className="flex flex-col gap-6">
-        <TileGrid tiles={tiles} />
+        <TileGrid tiles={memberTiles} />
+        {isAdmin && <TileGrid heading="Coach console" tiles={coachTiles} />}
         <Card>
           <CardHeader>
             <CardTitle>No member profile linked</CardTitle>
@@ -61,12 +77,15 @@ export default async function DashboardPage() {
         <p className="text-muted">Handicap Index: {me.handicapIndex.toFixed(1)}</p>
       </div>
 
-      <TileGrid tiles={tiles} />
+      <TileGrid tiles={memberTiles} />
+      {isAdmin && <TileGrid heading="Coach console" tiles={coachTiles} />}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card>
           <CardHeader>
-            <Calendar className="mb-1 h-5 w-5 text-candy-green" />
+            <IconChip color="green">
+              <Calendar className="h-5 w-5" />
+            </IconChip>
             <CardTitle className="text-base">Next league night</CardTitle>
           </CardHeader>
           <CardContent>
@@ -96,7 +115,9 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <Users className="mb-1 h-5 w-5 text-candy-blue" />
+            <IconChip color="blue">
+              <Users className="h-5 w-5" />
+            </IconChip>
             <CardTitle className="text-base">Your group</CardTitle>
           </CardHeader>
           <CardContent>
@@ -113,7 +134,9 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <Trophy className="mb-1 h-5 w-5 text-candy-yellow" />
+            <IconChip color="yellow">
+              <Trophy className="h-5 w-5" />
+            </IconChip>
             <CardTitle className="text-base">Season standing</CardTitle>
           </CardHeader>
           <CardContent>
