@@ -8,7 +8,7 @@ import { isDemoMode } from "@/lib/data";
 
 /**
  * The app's front door. Signed-in users go straight to their area; everyone
- * else gets the Anytime Golf League Night sign-in screen.
+ * else gets the Anytime Golf Member Night sign-in screen.
  */
 export default async function Home() {
   const demo = isDemoMode();
@@ -21,7 +21,7 @@ export default async function Home() {
   return (
     <AuthShell
       heading="Sign in"
-      sub={demo ? undefined : "Anytime Golf League Night — Tuesday & Thursday."}
+      sub={demo ? undefined : "Anytime Golf Member Night — Tuesday & Thursday."}
       footer={
         !demo && (
           <div className="flex flex-col gap-1">

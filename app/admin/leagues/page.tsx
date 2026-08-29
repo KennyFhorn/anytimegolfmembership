@@ -22,7 +22,7 @@ export default async function AdminLeaguesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">League Nights</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Member Nights</h1>
         <p className="text-muted">Tuesday and Thursday sessions</p>
       </div>
 
@@ -79,7 +79,7 @@ export default async function AdminLeaguesPage() {
               </Select>
             </div>
             <Button type="submit" className="sm:col-span-6 sm:w-fit">
-              Create league night
+              Create member night
             </Button>
           </form>
         </CardContent>

@@ -61,17 +61,17 @@ export default async function HistoryPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">History</h1>
-        <p className="text-muted">Every league night you&apos;ve played, your results, and prizes won.</p>
+        <p className="text-muted">Every member night you&apos;ve played, your results, and prizes won.</p>
       </div>
 
       <Card>
         <CardHeader>
           <HistoryIcon className="mb-1 h-5 w-5 text-candy-purple" />
-          <CardTitle>League nights</CardTitle>
+          <CardTitle>Member nights</CardTitle>
         </CardHeader>
         <CardContent>
           {played.length === 0 ? (
-            <p className="text-sm text-muted">No league nights on record yet.</p>
+            <p className="text-sm text-muted">No member nights on record yet.</p>
           ) : (
             <Table>
               <TableHead>

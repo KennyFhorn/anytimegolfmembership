@@ -36,12 +36,12 @@ export default async function AdminPrizesPage() {
             <div className="flex flex-col gap-1">
               <Label htmlFor="scope">Scope</Label>
               <Select id="scope" name="scope" defaultValue="night">
-                <option value="night">Single league night</option>
+                <option value="night">Single member night</option>
                 <option value="season">Season</option>
               </Select>
             </div>
             <div className="flex flex-col gap-1">
-              <Label htmlFor="leagueNightId">League night (if scoped to a night)</Label>
+              <Label htmlFor="leagueNightId">Member night (if scoped to a night)</Label>
               <Select id="leagueNightId" name="leagueNightId" defaultValue="">
                 <option value="">—</option>
                 {leagueNights.map((n) => (

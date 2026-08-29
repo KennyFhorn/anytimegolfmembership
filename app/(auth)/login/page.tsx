@@ -29,7 +29,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <AuthShell
       heading="Sign in"
-      sub={demo ? undefined : "Welcome back to Anytime Golf League Night."}
+      sub={demo ? undefined : "Welcome back to Anytime Golf Member Night."}
       footer={
         !demo && (
           <div className="flex flex-col gap-1">

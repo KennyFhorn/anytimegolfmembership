@@ -18,7 +18,7 @@ export default async function StandingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Leaderboard</CardTitle>
-          <CardDescription>Ranked by total points across every league night this season</CardDescription>
+          <CardDescription>Ranked by total points across every member night this season</CardDescription>
         </CardHeader>
         <CardContent>
           {standings.length === 0 ? (

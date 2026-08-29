@@ -19,7 +19,7 @@ const NAV_LINKS = [
 const COACH_LINKS = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/members", label: "Members" },
-  { href: "/admin/leagues", label: "League nights" },
+  { href: "/admin/leagues", label: "Member nights" },
   { href: "/admin/prizes", label: "Prizes" },
   { href: "/admin/seasons", label: "Seasons" },
 ];

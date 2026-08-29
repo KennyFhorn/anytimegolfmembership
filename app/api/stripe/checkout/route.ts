@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
   const night = await repo.getLeagueNight(leagueNightId);
   if (!night) {
-    return NextResponse.json({ error: "League night not found" }, { status: 404 });
+    return NextResponse.json({ error: "Member night not found" }, { status: 404 });
   }
 
   const registration = await repo.registerMember(leagueNightId, me.id);
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
           currency: "usd",
           unit_amount: night.signupFeeCents,
           product_data: {
-            name: `Anytime Golf League Night — ${night.courseName}`,
+            name: `Anytime Golf Member Night — ${night.courseName}`,
             description: `${night.date} signup fee`,
           },
         },

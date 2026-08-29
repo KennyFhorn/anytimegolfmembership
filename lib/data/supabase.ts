@@ -406,7 +406,7 @@ export function createSupabaseRepository(client: SupabaseClient): Repository {
     async saveScores(leagueNightId, input: ScoreInput[]) {
       const night = must(
         await this.getLeagueNight(leagueNightId),
-        "League night not found",
+        "Member night not found",
       );
 
       const { data: memberRows, error: memberError } = await client

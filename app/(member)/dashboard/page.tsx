@@ -54,7 +54,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
   const coachTiles: Tile[] = [
     { href: "/admin", label: "Overview", icon: LayoutDashboard, color: "blue" },
     { href: "/admin/members", label: "Members", icon: Users, color: "pink" },
-    { href: "/admin/leagues", label: "League nights", icon: Calendar, color: "orange" },
+    { href: "/admin/leagues", label: "Member nights", icon: Calendar, color: "orange" },
     { href: "/admin/prizes", label: "Prizes", icon: Gift, color: "teal" },
     { href: "/admin/seasons", label: "Seasons", icon: CalendarRange, color: "red" },
   ];
@@ -67,7 +67,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
             {showPlayerView && me ? `Welcome back, ${me.fullName.split(" ")[0]}` : "Coach console"}
           </h1>
           <p className="text-muted">
-            {showPlayerView && me ? `Handicap Index: ${me.handicapIndex.toFixed(1)}` : "Everything for running league night."}
+            {showPlayerView && me ? `Handicap Index: ${me.handicapIndex.toFixed(1)}` : "Everything for running member night."}
           </p>
         </div>
         {isAdmin && (
@@ -102,7 +102,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
                     <IconBadge color="green" size="sm">
                       <Calendar className="h-4 w-4" />
                     </IconBadge>
-                    <h3 className="font-bold">Next league night</h3>
+                    <h3 className="font-bold">Next member night</h3>
                   </div>
                   {nextNight ? (
                     <div className="flex flex-col gap-2">
