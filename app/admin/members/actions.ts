@@ -8,18 +8,34 @@ export async function createMemberAction(formData: FormData) {
   await requireAdmin();
   const repo = await getRepository();
 
-  const fullName = String(formData.get("fullName") ?? "").trim();
+  const firstName = String(formData.get("firstName") ?? "").trim();
+  const lastName = String(formData.get("lastName") ?? "").trim();
+  const fullName = `${firstName} ${lastName}`.trim();
   const email = String(formData.get("email") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
+  const address = String(formData.get("address") ?? "").trim();
   const handicapIndex = Number(formData.get("handicapIndex") ?? 18);
+  const birthdate = String(formData.get("birthdate") ?? "").trim();
+  const gender = String(formData.get("gender") ?? "").trim();
+  const yearStartedGolf = Number(formData.get("yearStartedGolf") ?? NaN);
+  const emergencyContactName = String(formData.get("emergencyContactName") ?? "").trim();
+  const emergencyContactPhone = String(formData.get("emergencyContactPhone") ?? "").trim();
 
   if (!fullName || !email) return;
 
   await repo.createMember({
     fullName,
+    firstName: firstName || null,
+    lastName: lastName || null,
     email,
     phone: phone || null,
+    address: address || null,
     handicapIndex: Number.isFinite(handicapIndex) ? handicapIndex : 18,
+    birthdate: birthdate || null,
+    gender: gender || null,
+    yearStartedGolf: Number.isFinite(yearStartedGolf) ? yearStartedGolf : null,
+    emergencyContactName: emergencyContactName || null,
+    emergencyContactPhone: emergencyContactPhone || null,
   });
 
   revalidatePath("/admin/members");

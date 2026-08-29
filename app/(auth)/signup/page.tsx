@@ -13,6 +13,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
     <AuthShell
       heading="Create your account"
       sub="Register for Anytime Golf League Night."
+      wide
       footer={
         <span>
           Already have an account?{" "}

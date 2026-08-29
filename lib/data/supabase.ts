@@ -17,10 +17,20 @@ function toMember(row: Row): Member {
     id: row.id as string,
     profileId: row.profile_id as string | null,
     fullName: row.full_name as string,
+    firstName: (row.first_name as string | null) ?? null,
+    lastName: (row.last_name as string | null) ?? null,
     email: row.email as string,
     phone: row.phone as string | null,
+    address: (row.address as string | null) ?? null,
     handicapIndex: Number(row.handicap_index),
     active: row.active as boolean,
+    birthdate: (row.birthdate as string | null) ?? null,
+    gender: (row.gender as string | null) ?? null,
+    yearStartedGolf: row.year_started_golf === null || row.year_started_golf === undefined
+      ? null
+      : Number(row.year_started_golf),
+    emergencyContactName: (row.emergency_contact_name as string | null) ?? null,
+    emergencyContactPhone: (row.emergency_contact_phone as string | null) ?? null,
   };
 }
 
@@ -112,9 +122,17 @@ export function createSupabaseRepository(client: SupabaseClient): Repository {
         .from("members")
         .insert({
           full_name: input.fullName,
+          first_name: input.firstName ?? null,
+          last_name: input.lastName ?? null,
           email: input.email,
           phone: input.phone ?? null,
+          address: input.address ?? null,
           handicap_index: input.handicapIndex ?? 18,
+          birthdate: input.birthdate ?? null,
+          gender: input.gender ?? null,
+          year_started_golf: input.yearStartedGolf ?? null,
+          emergency_contact_name: input.emergencyContactName ?? null,
+          emergency_contact_phone: input.emergencyContactPhone ?? null,
         })
         .select()
         .single();
@@ -124,10 +142,18 @@ export function createSupabaseRepository(client: SupabaseClient): Repository {
     async updateMember(id, input) {
       const patch: Record<string, unknown> = {};
       if (input.fullName !== undefined) patch.full_name = input.fullName;
+      if (input.firstName !== undefined) patch.first_name = input.firstName;
+      if (input.lastName !== undefined) patch.last_name = input.lastName;
       if (input.email !== undefined) patch.email = input.email;
       if (input.phone !== undefined) patch.phone = input.phone;
+      if (input.address !== undefined) patch.address = input.address;
       if (input.handicapIndex !== undefined) patch.handicap_index = input.handicapIndex;
       if (input.active !== undefined) patch.active = input.active;
+      if (input.birthdate !== undefined) patch.birthdate = input.birthdate;
+      if (input.gender !== undefined) patch.gender = input.gender;
+      if (input.yearStartedGolf !== undefined) patch.year_started_golf = input.yearStartedGolf;
+      if (input.emergencyContactName !== undefined) patch.emergency_contact_name = input.emergencyContactName;
+      if (input.emergencyContactPhone !== undefined) patch.emergency_contact_phone = input.emergencyContactPhone;
 
       const { data, error } = await client
         .from("members")

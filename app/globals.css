@@ -12,6 +12,20 @@
   --brand-dark: #0f7a41;
   --brand-foreground: #04140a;
   --gold: #d9b45a;
+
+  /* Pastel candy-jar palette for tile navigation — soft, not saturated, always
+     paired with dark tile-foreground text/icons for contrast (never white). */
+  --candy-red: #ffadad;
+  --candy-orange: #ffd6a5;
+  --candy-yellow: #fdffb6;
+  --candy-green: #caffbf;
+  --candy-teal: #9bf6ff;
+  --candy-blue: #a0c4ff;
+  --candy-purple: #bdb2ff;
+  --candy-pink: #ffc6ff;
+  --tile-foreground: #1f2430;
+  --tile-disabled: #dcdde6;
+  --tile-disabled-foreground: #5b6472;
 }
 
 @theme inline {
@@ -26,6 +40,18 @@
   --color-brand-dark: var(--brand-dark);
   --color-brand-foreground: var(--brand-foreground);
   --color-gold: var(--gold);
+
+  --color-candy-red: var(--candy-red);
+  --color-candy-orange: var(--candy-orange);
+  --color-candy-yellow: var(--candy-yellow);
+  --color-candy-green: var(--candy-green);
+  --color-candy-teal: var(--candy-teal);
+  --color-candy-blue: var(--candy-blue);
+  --color-candy-purple: var(--candy-purple);
+  --color-candy-pink: var(--candy-pink);
+  --color-tile-foreground: var(--tile-foreground);
+  --color-tile-disabled: var(--tile-disabled);
+  --color-tile-disabled-foreground: var(--tile-disabled-foreground);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

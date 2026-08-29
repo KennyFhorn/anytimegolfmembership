@@ -12,9 +12,17 @@ import type {
 
 export interface NewMemberInput {
   fullName: string;
+  firstName?: string | null;
+  lastName?: string | null;
   email: string;
   phone?: string | null;
+  address?: string | null;
   handicapIndex?: number;
+  birthdate?: string | null;
+  gender?: string | null;
+  yearStartedGolf?: number | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
 }
 
 export interface NewLeagueNightInput {
