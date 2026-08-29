@@ -8,6 +8,7 @@ import type {
   Score,
   Season,
   StandingRow,
+  UserRole,
 } from "../types";
 
 export interface NewMemberInput {
@@ -81,6 +82,12 @@ export interface Repository {
   /** Self-service update, scoped to the member with this id — callers must
    * already have verified `id` belongs to the requesting user. */
   updateOwnMember(id: string, input: OwnMemberProfileInput): Promise<Member>;
+  /** null if this member has no linked login (no profiles row) yet — role
+   * doesn't apply until they do. */
+  getMemberRole(memberId: string): Promise<UserRole | null>;
+  /** Throws if the member has no linked login. Callers must already have
+   * verified the caller is admin/owner (requireAdmin). */
+  updateMemberRole(memberId: string, role: UserRole): Promise<void>;
 
   // Seasons
   listSeasons(): Promise<Season[]>;

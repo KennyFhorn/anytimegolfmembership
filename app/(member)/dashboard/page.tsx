@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ContentTile, IconBadge, TileGrid, type Tile } from "@/components/tile-grid";
 import { getRepository } from "@/lib/data";
-import { getCurrentProfile } from "@/lib/auth";
+import { getCurrentProfile, hasCoachAccess } from "@/lib/auth";
 import { cn, formatCents, formatDate } from "@/lib/utils";
 
 export default async function DashboardPage({ searchParams }: PageProps<"/dashboard">) {
@@ -21,7 +21,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
   const repo = await getRepository();
   const profile = await getCurrentProfile();
   const me = profile ? await repo.getMemberByProfileId(profile.id) : null;
-  const isAdmin = profile?.role === "admin";
+  const isAdmin = hasCoachAccess(profile?.role);
   // Admins land on the coach console by default — pass ?view=player to see
   // the same dashboard a regular member gets, via the button below.
   const showPlayerView = !isAdmin || view === "player";

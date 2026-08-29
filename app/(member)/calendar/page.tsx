@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { AddToCalendarButton } from "@/components/add-to-calendar-button";
 import { CancelDetailsButton } from "@/components/cancel-details-button";
 import { getRepository } from "@/lib/data";
-import { getCurrentProfile } from "@/lib/auth";
+import { getCurrentProfile, hasCoachAccess } from "@/lib/auth";
 import { cn, formatDate } from "@/lib/utils";
 import { googleCalendarUrl, outlookCalendarUrl } from "@/lib/ics";
 import { DEFAULT_GAME_TYPE, GAME_TYPES, gameTypeLabel } from "@/lib/game-types";
@@ -41,7 +41,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
   const { month: monthParam } = await searchParams;
   const repo = await getRepository();
   const profile = await getCurrentProfile();
-  const isAdmin = profile?.role === "admin";
+  const isAdmin = hasCoachAccess(profile?.role);
   const [nights, courses] = await Promise.all([repo.listLeagueNights(), repo.listCourses()]);
 
   const monthAnchor = parseMonthParam(typeof monthParam === "string" ? monthParam : undefined);

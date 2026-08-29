@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { LoginForm } from "@/components/auth/login-form";
 import { DemoShortcuts } from "@/components/auth/demo-shortcuts";
-import { getCurrentProfile } from "@/lib/auth";
+import { getCurrentProfile, hasCoachAccess } from "@/lib/auth";
 import { isDemoMode } from "@/lib/data";
 
 /**
@@ -15,7 +15,7 @@ export default async function Home() {
 
   if (!demo) {
     const profile = await getCurrentProfile();
-    if (profile) redirect(profile.role === "admin" ? "/admin" : "/dashboard");
+    if (profile) redirect(hasCoachAccess(profile.role) ? "/admin" : "/dashboard");
   }
 
   return (

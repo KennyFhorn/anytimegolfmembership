@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getRepository } from "@/lib/data";
 import { requireAdmin } from "@/lib/auth";
+import type { UserRole } from "@/lib/types";
+
+const ASSIGNABLE_ROLES: UserRole[] = ["member", "admin", "owner"];
 
 export async function createMemberAction(formData: FormData) {
   await requireAdmin();
@@ -96,4 +99,18 @@ export async function updateMemberAction(memberId: string, formData: FormData) {
 
   revalidatePath("/admin/members");
   redirect("/admin/members");
+}
+
+export async function updateMemberRoleAction(memberId: string, formData: FormData) {
+  // requireAdmin() covers both admin and owner — both are allowed to use
+  // the role radio buttons, per how it was asked for.
+  await requireAdmin();
+  const repo = await getRepository();
+
+  const role = String(formData.get("role") ?? "");
+  if (!ASSIGNABLE_ROLES.includes(role as UserRole)) return;
+
+  await repo.updateMemberRole(memberId, role as UserRole);
+  revalidatePath(`/admin/members/${memberId}`);
+  revalidatePath("/admin/members");
 }

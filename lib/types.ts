@@ -1,4 +1,16 @@
-export type UserRole = "admin" | "member";
+// "member" is displayed as "User" in role-management UI — kept as "member"
+// internally since it's already threaded through most of the codebase as a
+// role check, and renaming it would touch far more than the role feature
+// itself needs to.
+export type UserRole = "owner" | "admin" | "member";
+
+/** Owner and admin both get full Coach console access; owner additionally
+ * gets the role-management radio buttons on the member edit page. Lives
+ * here (not lib/auth.ts) so client components can import it too, without
+ * pulling in lib/auth.ts's server-only (next/headers) dependencies. */
+export function hasCoachAccess(role: UserRole | null | undefined): boolean {
+  return role === "admin" || role === "owner";
+}
 export type DayOfWeek = "tuesday" | "thursday";
 export type LeagueStatus = "upcoming" | "in_progress" | "completed";
 export type RegistrationStatus = "registered" | "waitlisted" | "cancelled";

@@ -40,30 +40,37 @@ Copy `.env.example` to `.env.local` and fill in:
    `0002_auth_linking.sql`, `0003_password_signup.sql`, `0004_member_profile_fields.sql`,
    `0005_member_self_service.sql`, `0006_backfill_member_names.sql`,
    `0007_league_night_game_type.sql`, `0008_courses.sql`, `0009_backfill_courses.sql`,
-   `0010_seed_trackman_courses.sql`, `0011_seed_sample_members.sql` — these create all tables, RLS
-   policies, the auth triggers, a starter "Fall 2026 League" season, the security-definer function
-   members use to edit their own profile from `/account`, a one-time backfill of
-   first_name/last_name for any member row created before 0004 added those columns, the
-   `game_type` column league nights use for their round format (see `lib/game-types.ts`), the
-   self-growing `courses` table used for the Course autocomplete on league night creation, a
-   one-time backfill of that table from any league night created before 0008 added it, a
-   ~556-course seed pulled from TrackMan's own published course list (source CSV in
-   `supabase/source-data/`, formatted as "Course Name (City, State, Country)" — see the
-   migration's header comment for the formatting rules), and 20 fictional sample members
+   `0010_seed_trackman_courses.sql`, `0011_seed_sample_members.sql`, `0012_add_owner_role.sql`,
+   `0013_owner_role_permissions.sql` — these create all tables, RLS policies, the auth triggers, a
+   starter "Fall 2026 League" season, the security-definer function members use to edit their own
+   profile from `/account`, a one-time backfill of first_name/last_name for any member row created
+   before 0004 added those columns, the `game_type` column league nights use for their round
+   format (see `lib/game-types.ts`), the self-growing `courses` table used for the Course
+   autocomplete on league night creation, a one-time backfill of that table from any league night
+   created before 0008 added it, a ~556-course seed pulled from TrackMan's own published course
+   list (source CSV in `supabase/source-data/`, formatted as "Course Name (City, State, Country)"
+   — see the migration's header comment for the formatting rules), 20 fictional sample members
    (`0011`, optional — see its header comment for how to remove them again) registered and paid
    for whatever your next upcoming league night is, so you can click "Generate groups" on it and
-   see the handicap-balanced grouping actually run against real data.
+   see the handicap-balanced grouping actually run against real data, and a third `owner` role
+   (`0012`/`0013`, run in that order — see the note below) with a role-management RPC that closes
+   a privilege-escalation hole the initial schema had.
 3. Copy **Project Settings → API → Project URL / anon public key / service_role key** into
    `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.
 4. **Authentication → Sign In / Providers → Email**: enable the Email provider, "Confirm email",
    and "Allow new users to sign up". **Authentication → URL Configuration**: set the Site URL and
    add your deploy domain + `http://localhost:8218/**` to the redirect allow-list.
 5. Create an account through `/signup` with the email you (or Coach Ryan) will use as admin, then
-   in the SQL editor promote that user to admin:
+   in the SQL editor promote that user — `owner` is the top role (also lets you change other
+   people's roles from `/admin/members/<id>` afterward; use `admin` if you just want Coach console
+   access without that):
    ```sql
-   update profiles set role = 'admin'
+   update profiles set role = 'owner'
    where id = (select id from auth.users where email = 'you@example.com');
    ```
+   This manual step is the *only* way to become owner/admin the very first time — after that,
+   role changes happen from the "Role & permissions" panel at the top of a member's edit page in
+   `/admin/members`, visible only to existing admins/owners.
 6. Players self-register at `/signup`; the `handle_new_user` trigger creates their `profiles` and
    `members` rows and links them by email, so a member the coach pre-adds in `/admin/members` is
    auto-claimed when that person signs up with the same email.
@@ -88,7 +95,7 @@ port — the fixed `8218` port is only used by the local `npm run dev` / `npm st
 
 - `/dashboard`, `/leagues/[id]`, `/standings` — member-facing, responsive (mobile-first)
 - `/admin/*` — Coach Ryan's console: members, league nights, registrations/payments, group
-  generation, score entry, prizes, seasons. Gated to `profiles.role = 'admin'`.
+  generation, score entry, prizes, seasons. Gated to `profiles.role in ('admin', 'owner')`.
 - `lib/grouping.ts` — snake-seed handicap balancing for foursomes
 - `lib/handicap.ts` — rolling handicap recalculation after each night's scores are posted
 - `lib/scoring.ts` — position → points and season standings aggregation

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SignupForm } from "@/components/auth/signup-form";
-import { getCurrentProfile } from "@/lib/auth";
+import { getCurrentProfile, hasCoachAccess } from "@/lib/auth";
 import { isDemoMode } from "@/lib/data";
 
 export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
@@ -12,7 +12,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
 
   // Same as /login — don't show a signup form to someone already signed in.
   const profile = await getCurrentProfile();
-  if (profile) redirect(next !== "/dashboard" ? next : profile.role === "admin" ? "/admin" : "/dashboard");
+  if (profile) redirect(next !== "/dashboard" ? next : hasCoachAccess(profile.role) ? "/admin" : "/dashboard");
 
   return (
     <AuthShell
