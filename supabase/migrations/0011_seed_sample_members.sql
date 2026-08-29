@@ -56,7 +56,7 @@ insert into registrations (league_night_id, member_id, status, payment_status)
 select
   target_night.id,
   new_members.id,
-  'registered',
-  case when row_number() over () % 5 = 0 then 'pending' else 'paid' end
+  'registered'::registration_status,
+  (case when row_number() over () % 5 = 0 then 'pending' else 'paid' end)::payment_status
 from new_members, target_night
 on conflict (league_night_id, member_id) do nothing;
