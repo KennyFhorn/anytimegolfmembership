@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Calendar,
   ChevronDown,
@@ -41,7 +41,6 @@ export function SiteHeader({
   isDemoMode: boolean;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [coachOpen, setCoachOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -72,8 +71,11 @@ export function SiteHeader({
     setSigningOut(true);
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
+    // Full navigation, not router.push — same reasoning as sign-in/sign-up:
+    // guarantees a fresh server request instead of a possibly-stale client
+    // router cache for the destination route.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign("/login");
   }
 
   return (

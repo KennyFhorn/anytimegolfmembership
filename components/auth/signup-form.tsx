@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
@@ -20,8 +19,6 @@ function ageFromBirthdate(birthdate: string): number | null {
 }
 
 export function SignupForm({ next = "/dashboard" }: { next?: string }) {
-  const router = useRouter();
-
   // Name
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -85,8 +82,8 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
       });
       if (error) throw error;
       if (data.session) {
-        router.push(next);
-        router.refresh();
+        // Full navigation, not router.push — see the note in login-form.tsx.
+        window.location.assign(next);
       } else {
         setSent(true);
       }

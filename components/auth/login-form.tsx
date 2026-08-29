@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 
 export function LoginForm({ next = "/dashboard" }: { next?: string }) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -22,8 +20,11 @@ export function LoginForm({ next = "/dashboard" }: { next?: string }) {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      router.push(next);
-      router.refresh();
+      // A full navigation (not router.push) so the destination is always a
+      // fresh server request with the just-set auth cookie attached — the
+      // client router's cache for /dashboard can otherwise be stale enough
+      // that the page appears to hang right after signing in.
+      window.location.assign(next);
     } catch (err) {
       setBusy(false);
       const msg = err instanceof Error ? err.message : "Something went wrong";
