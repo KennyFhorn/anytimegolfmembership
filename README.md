@@ -38,9 +38,10 @@ Copy `.env.example` to `.env.local` and fill in:
 1. Create a project at [supabase.com](https://supabase.com).
 2. In the SQL Editor, run the migrations in order: `supabase/migrations/0001_init.sql`,
    `0002_auth_linking.sql`, `0003_password_signup.sql`, `0004_member_profile_fields.sql`,
-   `0005_member_self_service.sql` — these create all tables, RLS policies, the auth triggers, a
-   starter "Fall 2026 League" season, and the security-definer function members use to edit their
-   own profile from `/account`.
+   `0005_member_self_service.sql`, `0006_backfill_member_names.sql` — these create all tables, RLS
+   policies, the auth triggers, a starter "Fall 2026 League" season, the security-definer function
+   members use to edit their own profile from `/account`, and a one-time backfill of
+   first_name/last_name for any member row created before 0004 added those columns.
 3. Copy **Project Settings → API → Project URL / anon public key / service_role key** into
    `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.
 4. **Authentication → Sign In / Providers → Email**: enable the Email provider, "Confirm email",
