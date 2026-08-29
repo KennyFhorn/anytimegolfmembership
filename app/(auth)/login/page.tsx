@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { LoginForm } from "@/components/auth/login-form";
 import { DemoShortcuts } from "@/components/auth/demo-shortcuts";
-import { getCurrentProfile, hasCoachAccess } from "@/lib/auth";
+import { getCurrentProfile } from "@/lib/auth";
 import { isDemoMode } from "@/lib/data";
+import { resolveSignedInTarget } from "@/lib/types";
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const demo = isDemoMode();
@@ -15,9 +16,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   // button, a link from before you signed in) used to render the login
   // form anyway — the navbar showed you as signed in while the page under
   // it still showed a sign-in form. Bounce straight to where you're going.
+  //
+  // `next` is only honored if this user actually has access to it — a
+  // member bounced here from /admin?next=/admin must NOT be sent straight
+  // back to /admin (that's an infinite redirect loop between the two
+  // pages, not a fix). Fall back to the role-appropriate default instead.
   if (!demo) {
     const profile = await getCurrentProfile();
-    if (profile) redirect(next !== "/dashboard" ? next : hasCoachAccess(profile.role) ? "/admin" : "/dashboard");
+    if (profile) redirect(resolveSignedInTarget(next, profile.role));
   }
 
   return (
