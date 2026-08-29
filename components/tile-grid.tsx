@@ -59,6 +59,35 @@ export function IconChip({ color, children }: { color: CandyColor; children: Rea
   );
 }
 
+/**
+ * A full candy-colored content card — same palette and dark-on-light
+ * contrast rule as the nav tiles, but sized to hold real content (a date, a
+ * badge, a button) instead of just an icon + label. Use `text-tile-foreground/70`
+ * for anything that would otherwise be "muted" text, since `text-muted` is
+ * tuned for the dark surface, not a light candy background.
+ */
+export function ContentTile({
+  color,
+  className,
+  children,
+}: {
+  color: CandyColor;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-3 rounded-2xl p-5 text-tile-foreground shadow-lg",
+        CANDY_COLORS[color],
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 function TileCard({ tile }: { tile: Tile }) {
   const Icon = tile.icon;
   const body = (

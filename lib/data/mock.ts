@@ -206,6 +206,21 @@ export function createMockRepository(): Repository {
       Object.assign(member, input);
       return member;
     },
+    async updateOwnMember(id, input) {
+      const member = members.find((m) => m.id === id);
+      if (!member) throw new Error("Member not found");
+      member.firstName = input.firstName;
+      member.lastName = input.lastName;
+      member.fullName = `${input.firstName} ${input.lastName}`.trim();
+      member.phone = input.phone ?? null;
+      member.address = input.address ?? null;
+      member.birthdate = input.birthdate ?? null;
+      member.gender = input.gender ?? null;
+      member.yearStartedGolf = input.yearStartedGolf ?? null;
+      member.emergencyContactName = input.emergencyContactName ?? null;
+      member.emergencyContactPhone = input.emergencyContactPhone ?? null;
+      return member;
+    },
 
     async listSeasons() {
       return [...seasons];

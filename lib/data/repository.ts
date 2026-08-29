@@ -49,6 +49,20 @@ export interface NewPrizeInput {
   notes?: string | null;
 }
 
+/** Fields a member may edit about themselves — deliberately excludes
+ * handicap, active status, and email, which stay coach/system-managed. */
+export interface OwnMemberProfileInput {
+  firstName: string;
+  lastName: string;
+  phone?: string | null;
+  address?: string | null;
+  birthdate?: string | null;
+  gender?: string | null;
+  yearStartedGolf?: number | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+}
+
 /**
  * Data access boundary for the whole app. Two implementations satisfy this
  * interface — a real Supabase-backed one and an in-memory demo one — chosen
@@ -63,6 +77,9 @@ export interface Repository {
   getMemberByProfileId(profileId: string): Promise<Member | null>;
   createMember(input: NewMemberInput): Promise<Member>;
   updateMember(id: string, input: Partial<NewMemberInput> & { active?: boolean }): Promise<Member>;
+  /** Self-service update, scoped to the member with this id — callers must
+   * already have verified `id` belongs to the requesting user. */
+  updateOwnMember(id: string, input: OwnMemberProfileInput): Promise<Member>;
 
   // Seasons
   listSeasons(): Promise<Season[]>;
