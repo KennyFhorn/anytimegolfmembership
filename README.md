@@ -39,12 +39,13 @@ Copy `.env.example` to `.env.local` and fill in:
 2. In the SQL Editor, run the migrations in order: `supabase/migrations/0001_init.sql`,
    `0002_auth_linking.sql`, `0003_password_signup.sql`, `0004_member_profile_fields.sql`,
    `0005_member_self_service.sql`, `0006_backfill_member_names.sql`,
-   `0007_league_night_game_type.sql`, `0008_courses.sql` — these create all tables, RLS policies,
-   the auth triggers, a starter "Fall 2026 League" season, the security-definer function members
-   use to edit their own profile from `/account`, a one-time backfill of first_name/last_name for
-   any member row created before 0004 added those columns, the `game_type` column league nights
-   use for their round format (see `lib/game-types.ts`), and the self-growing `courses` table used
-   for the Course autocomplete on league night creation.
+   `0007_league_night_game_type.sql`, `0008_courses.sql`, `0009_backfill_courses.sql` — these
+   create all tables, RLS policies, the auth triggers, a starter "Fall 2026 League" season, the
+   security-definer function members use to edit their own profile from `/account`, a one-time
+   backfill of first_name/last_name for any member row created before 0004 added those columns,
+   the `game_type` column league nights use for their round format (see `lib/game-types.ts`), the
+   self-growing `courses` table used for the Course autocomplete on league night creation, and a
+   one-time backfill of that table from any league night created before 0008 added it.
 3. Copy **Project Settings → API → Project URL / anon public key / service_role key** into
    `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.
 4. **Authentication → Sign In / Providers → Email**: enable the Email provider, "Confirm email",
