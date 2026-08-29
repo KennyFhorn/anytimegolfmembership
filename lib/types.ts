@@ -11,6 +11,22 @@ export type UserRole = "owner" | "admin" | "member";
 export function hasCoachAccess(role: UserRole | null | undefined): boolean {
   return role === "admin" || role === "owner";
 }
+
+/**
+ * Where a signed-in visitor to /login or /signup should actually land.
+ * `next` is only honored when this role has access to it — otherwise this
+ * falls back to the role-appropriate default. Without that check, a member
+ * bounced off /admin with ?next=/admin would be sent right back to /admin
+ * by this same "already signed in" redirect — an infinite loop between the
+ * two pages, not a fix.
+ */
+export function resolveSignedInTarget(next: string, role: UserRole | null | undefined): string {
+  const coach = hasCoachAccess(role);
+  if (next.startsWith("/admin")) return coach ? next : "/dashboard";
+  if (next === "/dashboard") return coach ? "/admin" : "/dashboard";
+  return next;
+}
+
 export type DayOfWeek = "tuesday" | "thursday";
 export type LeagueStatus = "upcoming" | "in_progress" | "completed";
 export type RegistrationStatus = "registered" | "waitlisted" | "cancelled";
