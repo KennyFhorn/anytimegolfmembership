@@ -15,12 +15,14 @@ import {
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
+import { Input, Label, Select } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { AddToCalendarButton } from "@/components/add-to-calendar-button";
 import { getRepository } from "@/lib/data";
 import { getCurrentProfile } from "@/lib/auth";
 import { cn, formatDate } from "@/lib/utils";
 import { googleCalendarUrl, outlookCalendarUrl } from "@/lib/ics";
+import { DEFAULT_GAME_TYPE, GAME_TYPES, gameTypeLabel } from "@/lib/game-types";
 import type { LeagueNight } from "@/lib/types";
 import { createLeagueNightFromCalendarAction } from "./actions";
 
@@ -77,7 +79,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
             Add a league night
           </summary>
           <div className="border-t border-border p-4 pt-4">
-            <form action={createLeagueNightFromCalendarAction} className="grid grid-cols-1 gap-3 sm:grid-cols-5">
+            <form action={createLeagueNightFromCalendarAction} className="grid grid-cols-1 gap-3 sm:grid-cols-6">
               <div className="flex flex-col gap-1">
                 <Label htmlFor="date">Date</Label>
                 <Input id="date" name="date" type="date" required />
@@ -98,7 +100,17 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                 <Label htmlFor="signupFee">Signup fee (USD)</Label>
                 <Input id="signupFee" name="signupFee" type="number" step="0.01" defaultValue={25} />
               </div>
-              <Button type="submit" className="sm:col-span-5 sm:w-fit">
+              <div className="flex flex-col gap-1 sm:col-span-2">
+                <Label htmlFor="gameType">Game type</Label>
+                <Select id="gameType" name="gameType" defaultValue={DEFAULT_GAME_TYPE}>
+                  {GAME_TYPES.map((g) => (
+                    <option key={g.value} value={g.value}>
+                      {g.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <Button type="submit" className="sm:col-span-6 sm:w-fit">
                 Add to calendar
               </Button>
             </form>
@@ -198,7 +210,10 @@ function ScheduleRow({ night, past = false }: { night: LeagueNight; past?: boole
           <span className="text-xl font-extrabold">{format(parseISO(night.date), "d")}</span>
         </div>
         <div>
-          <p className="font-semibold">{night.courseName}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-semibold">{night.courseName}</p>
+            <Badge variant="brand">{gameTypeLabel(night.gameType)}</Badge>
+          </div>
           <p className="text-sm text-muted">
             {formatDate(night.date)} · {night.dayOfWeek === "tuesday" ? "Tuesday" : "Thursday"} night
           </p>

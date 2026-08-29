@@ -6,6 +6,7 @@ import { Input, Select } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/ui/table";
 import { getRepository } from "@/lib/data";
 import { formatCents, formatDate } from "@/lib/utils";
+import { gameTypeLabel } from "@/lib/game-types";
 import {
   adminRegisterMemberAction,
   generateGroupsAction,
@@ -38,9 +39,12 @@ export default async function AdminLeagueNightPage({ params }: { params: Promise
       <div>
         <p className="text-sm text-muted">{night.dayOfWeek === "tuesday" ? "Tuesday" : "Thursday"} League Night</p>
         <h1 className="text-2xl font-bold tracking-tight">{formatDate(night.date)}</h1>
-        <p className="text-muted">
-          {night.courseName} · Par {night.coursePar} · Fee {formatCents(night.signupFeeCents)}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-muted">
+            {night.courseName} · Par {night.coursePar} · Fee {formatCents(night.signupFeeCents)}
+          </p>
+          <Badge variant="brand">{gameTypeLabel(night.gameType)}</Badge>
+        </div>
       </div>
 
       <Card>

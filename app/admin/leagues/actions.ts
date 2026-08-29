@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getRepository } from "@/lib/data";
 import { requireAdmin } from "@/lib/auth";
 import type { DayOfWeek } from "@/lib/types";
+import { DEFAULT_GAME_TYPE, GAME_TYPES } from "@/lib/game-types";
 
 export async function createLeagueNightAction(formData: FormData) {
   await requireAdmin();
@@ -16,6 +17,8 @@ export async function createLeagueNightAction(formData: FormData) {
   const coursePar = Number(formData.get("coursePar") ?? 72);
   const capacity = Number(formData.get("capacity") ?? 20);
   const signupFeeDollars = Number(formData.get("signupFee") ?? 0);
+  const gameTypeRaw = String(formData.get("gameType") ?? "");
+  const gameType = GAME_TYPES.some((g) => g.value === gameTypeRaw) ? gameTypeRaw : DEFAULT_GAME_TYPE;
 
   if (!date || !courseName) return;
 
@@ -30,6 +33,7 @@ export async function createLeagueNightAction(formData: FormData) {
     coursePar: Number.isFinite(coursePar) ? coursePar : 72,
     capacity: Number.isFinite(capacity) ? capacity : 20,
     signupFeeCents: Math.round((Number.isFinite(signupFeeDollars) ? signupFeeDollars : 0) * 100),
+    gameType,
   });
 
   revalidatePath("/admin/leagues");

@@ -2,10 +2,11 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
+import { Input, Label, Select } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/ui/table";
 import { getRepository } from "@/lib/data";
 import { formatCents, formatDate } from "@/lib/utils";
+import { GAME_TYPES, DEFAULT_GAME_TYPE, gameTypeLabel } from "@/lib/game-types";
 import { createLeagueNightAction } from "./actions";
 
 const STATUS_VARIANT = {
@@ -31,7 +32,7 @@ export default async function AdminLeaguesPage() {
           <CardDescription>Day of week is inferred from the date you pick.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={createLeagueNightAction} className="grid grid-cols-1 gap-3 sm:grid-cols-5">
+          <form action={createLeagueNightAction} className="grid grid-cols-1 gap-3 sm:grid-cols-6">
             <div className="flex flex-col gap-1">
               <Label htmlFor="date">Date</Label>
               <Input id="date" name="date" type="date" required />
@@ -52,7 +53,17 @@ export default async function AdminLeaguesPage() {
               <Label htmlFor="signupFee">Signup fee (USD)</Label>
               <Input id="signupFee" name="signupFee" type="number" step="0.01" defaultValue={25} />
             </div>
-            <Button type="submit" className="sm:col-span-5 sm:w-fit">
+            <div className="flex flex-col gap-1 sm:col-span-2">
+              <Label htmlFor="gameType">Game type</Label>
+              <Select id="gameType" name="gameType" defaultValue={DEFAULT_GAME_TYPE}>
+                {GAME_TYPES.map((g) => (
+                  <option key={g.value} value={g.value}>
+                    {g.label}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <Button type="submit" className="sm:col-span-6 sm:w-fit">
               Create league night
             </Button>
           </form>
@@ -69,6 +80,7 @@ export default async function AdminLeaguesPage() {
               <TableRow>
                 <TableHeaderCell>Date</TableHeaderCell>
                 <TableHeaderCell>Course</TableHeaderCell>
+                <TableHeaderCell>Format</TableHeaderCell>
                 <TableHeaderCell>Fee</TableHeaderCell>
                 <TableHeaderCell>Status</TableHeaderCell>
                 <TableHeaderCell />
@@ -79,6 +91,7 @@ export default async function AdminLeaguesPage() {
                 <TableRow key={night.id}>
                   <TableCell className="font-medium">{formatDate(night.date)}</TableCell>
                   <TableCell className="text-muted">{night.courseName}</TableCell>
+                  <TableCell className="text-muted">{gameTypeLabel(night.gameType)}</TableCell>
                   <TableCell>{formatCents(night.signupFeeCents)}</TableCell>
                   <TableCell>
                     <Badge variant={STATUS_VARIANT[night.status]}>{night.status.replace("_", " ")}</Badge>

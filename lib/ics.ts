@@ -1,4 +1,5 @@
 import type { LeagueNight } from "./types";
+import { gameTypeLabel } from "./game-types";
 
 /**
  * League nights don't carry a start time or timezone in the schema yet —
@@ -28,7 +29,7 @@ function escapeIcs(s: string): string {
 function eventFields(night: LeagueNight) {
   return {
     title: `Anytime Golf League Night — ${night.courseName}`,
-    description: `Anytime Golf League Night at ${night.courseName}.`,
+    description: `Anytime Golf League Night at ${night.courseName}. Format: ${gameTypeLabel(night.gameType)}.`,
     location: night.courseName,
   };
 }

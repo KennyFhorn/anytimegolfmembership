@@ -46,6 +46,9 @@ export interface LeagueNight {
   capacity: number;
   signupFeeCents: number;
   status: LeagueStatus;
+  /** Round format — see lib/game-types.ts. Free text so the coach isn't
+   * blocked by a fixed enum; validated against GAME_TYPES in the UI. */
+  gameType: string;
 }
 
 export interface Registration {
