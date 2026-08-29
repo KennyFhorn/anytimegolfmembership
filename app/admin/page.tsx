@@ -34,7 +34,7 @@ export default async function AdminOverviewPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Next league night</CardTitle>
+            <CardTitle className="text-base">Next member night</CardTitle>
           </CardHeader>
           <CardContent>
             {nextNight ? (
@@ -62,7 +62,7 @@ export default async function AdminOverviewPage() {
 
       {nextNight && (
         <Link href={`/admin/leagues/${nextNight.id}`} className="text-sm font-medium text-brand hover:underline">
-          Manage next league night →
+          Manage next member night →
         </Link>
       )}
 
@@ -80,12 +80,12 @@ export default async function AdminOverviewPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>League nights</CardTitle>
+            <CardTitle>Member nights</CardTitle>
             <CardDescription>Schedule Tuesday/Thursday nights and courses</CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/admin/leagues" className="text-sm font-medium text-brand hover:underline">
-              Manage league nights →
+              Manage member nights →
             </Link>
           </CardContent>
         </Card>

@@ -14,7 +14,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   const repo = await getRepository();
   const night = await repo.getLeagueNight(id);
   if (!night) {
-    return NextResponse.json({ error: "League night not found" }, { status: 404 });
+    return NextResponse.json({ error: "Member night not found" }, { status: 404 });
   }
 
   const ics = buildIcsEvent(night);

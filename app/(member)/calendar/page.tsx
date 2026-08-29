@@ -83,7 +83,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-candy-green text-tile-foreground transition-transform group-open:rotate-45">
               <Plus className="h-4 w-4" />
             </span>
-            Add a league night
+            Add a member night
           </summary>
           <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl">
             <form action={createLeagueNightFromCalendarAction} className="grid grid-cols-1 gap-3 sm:grid-cols-6">

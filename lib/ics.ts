@@ -28,8 +28,8 @@ function escapeIcs(s: string): string {
 
 function eventFields(night: LeagueNight) {
   return {
-    title: `Anytime Golf League Night — ${night.courseName}`,
-    description: `Anytime Golf League Night at ${night.courseName}. Format: ${gameTypeLabel(night.gameType)}.`,
+    title: `Anytime Golf Member Night — ${night.courseName}`,
+    description: `Anytime Golf Member Night at ${night.courseName}. Format: ${gameTypeLabel(night.gameType)}.`,
     location: night.courseName,
   };
 }
@@ -42,7 +42,7 @@ export function buildIcsEvent(night: LeagueNight): string {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Anytime Golf//League Night//EN",
+    "PRODID:-//Anytime Golf//Member Night//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",

@@ -37,7 +37,7 @@ export default async function AdminLeagueNightPage({ params }: { params: Promise
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="text-sm text-muted">{night.dayOfWeek === "tuesday" ? "Tuesday" : "Thursday"} League Night</p>
+        <p className="text-sm text-muted">{night.dayOfWeek === "tuesday" ? "Tuesday" : "Thursday"} Member Night</p>
         <h1 className="text-2xl font-bold tracking-tight">{formatDate(night.date)}</h1>
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-muted">

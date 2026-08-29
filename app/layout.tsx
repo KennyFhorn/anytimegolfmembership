@@ -26,7 +26,7 @@ const bebasNeue = Bebas_Neue({
 
 export const metadata: Metadata = {
   title: "Anytime Golf Member App",
-  description: "League night management for Anytime Golf's Trackman simulator studio.",
+  description: "Member night management for Anytime Golf's Trackman simulator studio.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
