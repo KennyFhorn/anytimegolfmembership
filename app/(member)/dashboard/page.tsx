@@ -9,13 +9,11 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
-import { IconChip, TileGrid, type Tile } from "@/components/tile-grid";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ContentTile, TileGrid, type Tile } from "@/components/tile-grid";
 import { getRepository } from "@/lib/data";
 import { getCurrentProfile } from "@/lib/auth";
-import { cn, formatCents, formatDate } from "@/lib/utils";
+import { formatCents, formatDate } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const repo = await getRepository();
@@ -39,9 +37,13 @@ export default async function DashboardPage() {
 
   const memberTiles: Tile[] = [
     { href: "/standings", label: "Standings", icon: Trophy, color: "yellow" },
-    nextNight
-      ? { href: `/leagues/${nextNight.id}`, label: "This week", sublabel: formatDate(nextNight.date), icon: Flag, color: "green" }
-      : { href: "#", label: "This week", sublabel: "No night scheduled", icon: Flag, color: "green", disabled: true },
+    {
+      href: "/calendar",
+      label: "This week",
+      sublabel: nextNight ? formatDate(nextNight.date) : "View schedule",
+      icon: Flag,
+      color: "green",
+    },
     { href: "/history", label: "History", icon: History, color: "purple" },
   ];
   const coachTiles: Tile[] = [
@@ -81,75 +83,63 @@ export default async function DashboardPage() {
       {isAdmin && <TileGrid heading="Coach console" tiles={coachTiles} />}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <IconChip color="green">
-              <Calendar className="h-5 w-5" />
-            </IconChip>
-            <CardTitle className="text-base">Next league night</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {nextNight ? (
-              <div className="flex flex-col gap-2">
-                <p className="font-medium">{formatDate(nextNight.date)}</p>
-                <p className="text-sm text-muted">{nextNight.courseName}</p>
-                <p className="text-sm text-muted">Fee: {formatCents(nextNight.signupFeeCents)}</p>
-                {registration ? (
-                  <Badge variant={registration.paymentStatus === "paid" ? "success" : "warning"}>
-                    {registration.paymentStatus === "paid" ? "Registered & paid" : "Registered — payment pending"}
-                  </Badge>
-                ) : (
-                  <Link
-                    href={`/leagues/${nextNight.id}`}
-                    className={cn(buttonVariants({ size: "sm" }), "self-start")}
-                  >
-                    Register
-                  </Link>
-                )}
-              </div>
-            ) : (
-              <p className="text-sm text-muted">No upcoming night scheduled yet.</p>
-            )}
-          </CardContent>
-        </Card>
+        <ContentTile color="green">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            <h3 className="font-bold">Next league night</h3>
+          </div>
+          {nextNight ? (
+            <div className="flex flex-col gap-2">
+              <p className="font-semibold">{formatDate(nextNight.date)}</p>
+              <p className="text-sm text-tile-foreground/70">{nextNight.courseName}</p>
+              <p className="text-sm text-tile-foreground/70">Fee: {formatCents(nextNight.signupFeeCents)}</p>
+              {registration ? (
+                <span className="w-fit rounded-full border border-tile-foreground/25 bg-tile-foreground/10 px-2.5 py-0.5 text-xs font-medium">
+                  {registration.paymentStatus === "paid" ? "Registered & paid" : "Registered — payment pending"}
+                </span>
+              ) : (
+                <Link
+                  href={`/leagues/${nextNight.id}`}
+                  className="w-fit rounded-md bg-tile-foreground px-3 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                >
+                  Register
+                </Link>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-tile-foreground/70">No upcoming night scheduled yet.</p>
+          )}
+        </ContentTile>
 
-        <Card>
-          <CardHeader>
-            <IconChip color="blue">
-              <Users className="h-5 w-5" />
-            </IconChip>
-            <CardTitle className="text-base">Your group</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {myGroup ? (
-              <div className="flex flex-col gap-1">
-                <p className="font-medium">Group {myGroup.groupNumber}</p>
-                <p className="text-sm text-muted">Avg handicap {myGroup.avgHandicap?.toFixed(1)}</p>
-              </div>
-            ) : (
-              <p className="text-sm text-muted">Groups haven&apos;t been posted for the next night yet.</p>
-            )}
-          </CardContent>
-        </Card>
+        <ContentTile color="blue">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            <h3 className="font-bold">Your group</h3>
+          </div>
+          {myGroup ? (
+            <div className="flex flex-col gap-1">
+              <p className="font-semibold">Group {myGroup.groupNumber}</p>
+              <p className="text-sm text-tile-foreground/70">Avg handicap {myGroup.avgHandicap?.toFixed(1)}</p>
+            </div>
+          ) : (
+            <p className="text-sm text-tile-foreground/70">Groups haven&apos;t been posted for the next night yet.</p>
+          )}
+        </ContentTile>
 
-        <Card>
-          <CardHeader>
-            <IconChip color="yellow">
-              <Trophy className="h-5 w-5" />
-            </IconChip>
-            <CardTitle className="text-base">Season standing</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {myStanding ? (
-              <div className="flex flex-col gap-1">
-                <p className="font-medium">#{myStanding.rank} of {standings.length}</p>
-                <p className="text-sm text-muted">{myStanding.totalPoints} pts · {myStanding.wins} wins</p>
-              </div>
-            ) : (
-              <p className="text-sm text-muted">No rounds recorded yet this season.</p>
-            )}
-          </CardContent>
-        </Card>
+        <ContentTile color="yellow">
+          <div className="flex items-center gap-2">
+            <Trophy className="h-5 w-5" />
+            <h3 className="font-bold">Season standing</h3>
+          </div>
+          {myStanding ? (
+            <div className="flex flex-col gap-1">
+              <p className="font-semibold">#{myStanding.rank} of {standings.length}</p>
+              <p className="text-sm text-tile-foreground/70">{myStanding.totalPoints} pts · {myStanding.wins} wins</p>
+            </div>
+          ) : (
+            <p className="text-sm text-tile-foreground/70">No rounds recorded yet this season.</p>
+          )}
+        </ContentTile>
       </div>
 
       {nextNight && (

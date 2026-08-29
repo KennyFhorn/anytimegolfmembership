@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  Calendar,
   ChevronDown,
   Flag,
   History,
   LayoutDashboard,
   LogOut,
   Trophy,
+  User,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -100,6 +102,7 @@ export function SiteHeader({
           <nav className="flex flex-wrap items-center gap-1 text-sm">
             <NavLink href="/dashboard" label="Dashboard" active={isActive("/dashboard")} icon={LayoutDashboard} />
             <NavLink href="/standings" label="Standings" active={isActive("/standings")} icon={Trophy} />
+            <NavLink href="/calendar" label="Calendar" active={isActive("/calendar")} icon={Calendar} />
             <NavLink href="/history" label="History" active={isActive("/history")} icon={History} />
 
             {isAdmin && (
@@ -158,11 +161,22 @@ export function SiteHeader({
                   <p className="truncate text-sm font-medium text-foreground">{profile.fullName}</p>
                   <p className="text-xs capitalize text-muted">{profile.role}</p>
                 </div>
+                <Link
+                  href="/account"
+                  onClick={closeMenus}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-surface-raised hover:text-foreground",
+                    isActive("/account") ? "bg-surface-raised text-foreground" : "text-muted",
+                  )}
+                >
+                  <User className="h-4 w-4" />
+                  Profile settings
+                </Link>
                 <button
                   type="button"
                   onClick={handleSignOut}
                   disabled={isDemoMode || signingOut}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-muted transition-colors hover:bg-surface-raised hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex w-full items-center gap-2 border-t border-border px-3 py-2 text-left text-sm text-muted transition-colors hover:bg-surface-raised hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <LogOut className="h-4 w-4" />
                   {signingOut ? "Signing out…" : "Sign out"}

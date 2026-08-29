@@ -164,6 +164,26 @@ export function createSupabaseRepository(client: SupabaseClient): Repository {
       if (error) throw error;
       return toMember(data);
     },
+    async updateOwnMember(_id, input) {
+      // Routed through a security-definer RPC (see migration 0005) rather
+      // than a direct table update — RLS only grants members SELECT on
+      // `members`, and the function itself hard-codes `profile_id =
+      // auth.uid()`, so the id we were passed can't be used to touch anyone
+      // else's row even if it were tampered with.
+      const { data, error } = await client.rpc("update_own_member_profile", {
+        p_first_name: input.firstName,
+        p_last_name: input.lastName,
+        p_phone: input.phone ?? null,
+        p_address: input.address ?? null,
+        p_birthdate: input.birthdate ?? null,
+        p_gender: input.gender ?? null,
+        p_year_started_golf: input.yearStartedGolf ?? null,
+        p_emergency_contact_name: input.emergencyContactName ?? null,
+        p_emergency_contact_phone: input.emergencyContactPhone ?? null,
+      });
+      if (error) throw error;
+      return toMember(Array.isArray(data) ? data[0] : data);
+    },
 
     async listSeasons() {
       const { data, error } = await client.from("seasons").select("*").order("start_date", { ascending: false });
