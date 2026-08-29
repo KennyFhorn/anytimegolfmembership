@@ -10,7 +10,7 @@ export async function proxy(request: NextRequest) {
   // a signed-out visitor hitting a protected route directly. Skipped in demo
   // mode, where there's no real Supabase auth cookie and the page-level
   // guards (a fixed demo profile) apply.
-  const PROTECTED = ["/admin", "/dashboard", "/standings", "/leagues"];
+  const PROTECTED = ["/admin", "/dashboard", "/standings", "/leagues", "/history"];
   const { pathname } = request.nextUrl;
   const isProtected = PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   if (isSupabaseConfigured && isProtected) {

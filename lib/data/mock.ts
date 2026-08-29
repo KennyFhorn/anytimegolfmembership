@@ -44,10 +44,18 @@ const members: Member[] = FIRST_NAMES.map((first, i) => {
     id: `member_${i + 1}`,
     profileId: i === 0 ? "demo-admin-profile" : null,
     fullName: `${first} ${last}`,
+    firstName: first,
+    lastName: last,
     email: `${first.toLowerCase()}.${last.toLowerCase()}@example.com`,
     phone: null,
+    address: null,
     handicapIndex: Math.round((4 + Math.random() * 20) * 10) / 10,
     active: true,
+    birthdate: null,
+    gender: null,
+    yearStartedGolf: null,
+    emergencyContactName: null,
+    emergencyContactPhone: null,
   };
 });
 
@@ -176,10 +184,18 @@ export function createMockRepository(): Repository {
         id: uid("member"),
         profileId: null,
         fullName: input.fullName,
+        firstName: input.firstName ?? null,
+        lastName: input.lastName ?? null,
         email: input.email,
         phone: input.phone ?? null,
+        address: input.address ?? null,
         handicapIndex: input.handicapIndex ?? 18,
         active: true,
+        birthdate: input.birthdate ?? null,
+        gender: input.gender ?? null,
+        yearStartedGolf: input.yearStartedGolf ?? null,
+        emergencyContactName: input.emergencyContactName ?? null,
+        emergencyContactPhone: input.emergencyContactPhone ?? null,
       };
       members.push(member);
       return member;

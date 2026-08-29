@@ -14,10 +14,18 @@ export interface Member {
   id: string;
   profileId: string | null;
   fullName: string;
+  firstName: string | null;
+  lastName: string | null;
   email: string;
   phone: string | null;
+  address: string | null;
   handicapIndex: number;
   active: boolean;
+  birthdate: string | null;
+  gender: string | null;
+  yearStartedGolf: number | null;
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
 }
 
 export interface Season {

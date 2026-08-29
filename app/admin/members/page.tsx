@@ -1,9 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
+import { Input, Label, Select } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/ui/table";
 import { getRepository } from "@/lib/data";
+import { formatDate } from "@/lib/utils";
 import { createMemberAction, toggleMemberActiveAction, updateHandicapAction } from "./actions";
 
 export default async function AdminMembersPage() {
@@ -25,20 +26,54 @@ export default async function AdminMembersPage() {
         <CardContent>
           <form action={createMemberAction} className="grid grid-cols-1 gap-3 sm:grid-cols-4">
             <div className="flex flex-col gap-1">
-              <Label htmlFor="fullName">Full name</Label>
-              <Input id="fullName" name="fullName" required placeholder="Jordan Sullivan" />
+              <Label htmlFor="firstName">First name</Label>
+              <Input id="firstName" name="firstName" required placeholder="Jordan" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="lastName">Last name</Label>
+              <Input id="lastName" name="lastName" required placeholder="Sullivan" />
             </div>
             <div className="flex flex-col gap-1">
               <Label htmlFor="email">Email</Label>
               <Input id="email" name="email" type="email" required placeholder="jordan@example.com" />
             </div>
             <div className="flex flex-col gap-1">
-              <Label htmlFor="phone">Phone (optional)</Label>
+              <Label htmlFor="phone">Phone</Label>
               <Input id="phone" name="phone" placeholder="(555) 555-0100" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="address">Address (optional)</Label>
+              <Input id="address" name="address" placeholder="123 Fairway Dr" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="birthdate">Birthdate (optional)</Label>
+              <Input id="birthdate" name="birthdate" type="date" max={new Date().toISOString().slice(0, 10)} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="gender">Gender (optional)</Label>
+              <Select id="gender" name="gender" defaultValue="">
+                <option value="">—</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="nonbinary">Nonbinary</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
+              </Select>
             </div>
             <div className="flex flex-col gap-1">
               <Label htmlFor="handicapIndex">Starting handicap</Label>
               <Input id="handicapIndex" name="handicapIndex" type="number" step="0.1" defaultValue={18} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="yearStartedGolf">Year started golf (optional)</Label>
+              <Input id="yearStartedGolf" name="yearStartedGolf" type="number" min="1930" placeholder="2015" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="emergencyContactName">Emergency contact name</Label>
+              <Input id="emergencyContactName" name="emergencyContactName" placeholder="Full name" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="emergencyContactPhone">Emergency contact phone</Label>
+              <Input id="emergencyContactPhone" name="emergencyContactPhone" placeholder="(555) 987-6543" />
             </div>
             <Button type="submit" className="sm:col-span-4 sm:w-fit">
               Add member
@@ -57,6 +92,11 @@ export default async function AdminMembersPage() {
               <TableRow>
                 <TableHeaderCell>Name</TableHeaderCell>
                 <TableHeaderCell>Email</TableHeaderCell>
+                <TableHeaderCell>Phone</TableHeaderCell>
+                <TableHeaderCell>Birthdate</TableHeaderCell>
+                <TableHeaderCell>Gender</TableHeaderCell>
+                <TableHeaderCell>Started golf</TableHeaderCell>
+                <TableHeaderCell>Emergency contact</TableHeaderCell>
                 <TableHeaderCell>Handicap</TableHeaderCell>
                 <TableHeaderCell>Status</TableHeaderCell>
                 <TableHeaderCell>Actions</TableHeaderCell>
@@ -67,6 +107,24 @@ export default async function AdminMembersPage() {
                 <TableRow key={member.id}>
                   <TableCell className="font-medium">{member.fullName}</TableCell>
                   <TableCell className="text-muted">{member.email}</TableCell>
+                  <TableCell className="text-muted">{member.phone ?? "—"}</TableCell>
+                  <TableCell className="text-muted">
+                    {member.birthdate ? formatDate(member.birthdate) : "—"}
+                  </TableCell>
+                  <TableCell className="text-muted capitalize">
+                    {member.gender ? member.gender.replace(/_/g, " ") : "—"}
+                  </TableCell>
+                  <TableCell className="text-muted">{member.yearStartedGolf ?? "—"}</TableCell>
+                  <TableCell className="text-muted">
+                    {member.emergencyContactName ? (
+                      <span>
+                        {member.emergencyContactName}
+                        {member.emergencyContactPhone && ` · ${member.emergencyContactPhone}`}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
                   <TableCell>
                     <form action={updateHandicapAction} className="flex items-center gap-2">
                       <input type="hidden" name="memberId" value={member.id} />
