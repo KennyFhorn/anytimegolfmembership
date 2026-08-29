@@ -94,6 +94,11 @@ export interface Repository {
   getNextLeagueNight(): Promise<LeagueNight | null>;
   createLeagueNight(input: NewLeagueNightInput): Promise<LeagueNight>;
   setLeagueNightStatus(id: string, status: LeagueNight["status"]): Promise<void>;
+  /** Course names used on past league nights — a self-maintaining "TrackMan
+   * course library" grown from what the coach has actually typed before,
+   * since there's no reliable catalog of the studio's licensed courses to
+   * hardcode (see migration 0008). */
+  listCourses(): Promise<string[]>;
 
   // Registrations
   listRegistrations(leagueNightId: string): Promise<Registration[]>;

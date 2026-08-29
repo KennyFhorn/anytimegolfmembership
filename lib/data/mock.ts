@@ -62,6 +62,10 @@ const members: Member[] = FIRST_NAMES.map((first, i) => {
 const pastNightId = "night_past_1";
 const nextNightId = "night_next_1";
 
+// Seeded from the two demo nights below — grows as createLeagueNight is
+// called, same as the real Supabase-backed courses table.
+const courses: string[] = ["Pebble Beach (TrackMan)", "St Andrews Old Course (TrackMan)"];
+
 const leagueNights: LeagueNight[] = [
   {
     id: pastNightId,
@@ -260,11 +264,15 @@ export function createMockRepository(): Repository {
         ...input,
       };
       leagueNights.push(night);
+      if (!courses.includes(night.courseName)) courses.push(night.courseName);
       return night;
     },
     async setLeagueNightStatus(id, status) {
       const night = leagueNights.find((n) => n.id === id);
       if (night) night.status = status;
+    },
+    async listCourses() {
+      return [...courses].sort();
     },
 
     async listRegistrations(leagueNightId) {

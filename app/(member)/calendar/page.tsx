@@ -41,7 +41,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
   const repo = await getRepository();
   const profile = await getCurrentProfile();
   const isAdmin = profile?.role === "admin";
-  const nights = await repo.listLeagueNights();
+  const [nights, courses] = await Promise.all([repo.listLeagueNights(), repo.listCourses()]);
 
   const monthAnchor = parseMonthParam(typeof monthParam === "string" ? monthParam : undefined);
   const monthStart = startOfMonth(monthAnchor);
@@ -86,7 +86,19 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
               </div>
               <div className="flex flex-col gap-1 sm:col-span-2">
                 <Label htmlFor="courseName">Course</Label>
-                <Input id="courseName" name="courseName" required placeholder="Augusta National (TrackMan)" />
+                <Input
+                  id="courseName"
+                  name="courseName"
+                  required
+                  placeholder="Augusta National (TrackMan)"
+                  list="course-options"
+                  autoComplete="off"
+                />
+                <datalist id="course-options">
+                  {courses.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
               </div>
               <div className="flex flex-col gap-1">
                 <Label htmlFor="coursePar">Par</Label>
