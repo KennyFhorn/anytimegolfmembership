@@ -34,7 +34,7 @@ export function AuthShell({
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand text-brand-foreground">
           <Flag className="h-6 w-6" />
         </span>
-        <span className="text-lg font-semibold tracking-tight">Anytime Golf</span>
+        <span className="font-brand text-3xl tracking-wide">Anytime Golf</span>
         <span className="text-xs uppercase tracking-[0.2em] text-muted">League Night</span>
       </Link>
 
