@@ -13,17 +13,18 @@
   --brand-foreground: #04140a;
   --gold: #d9b45a;
 
-  /* Pastel candy-jar palette for tile navigation — soft, not saturated, always
-     paired with dark tile-foreground text/icons for contrast (never white). */
-  --candy-red: #ffadad;
-  --candy-orange: #ffd6a5;
-  --candy-yellow: #fdffb6;
-  --candy-green: #caffbf;
-  --candy-teal: #9bf6ff;
-  --candy-blue: #a0c4ff;
-  --candy-purple: #bdb2ff;
-  --candy-pink: #ffc6ff;
-  --tile-foreground: #1f2430;
+  /* Candy-jar palette for tile navigation — punchy Skittles/M&M pop, kept
+     light enough that dark tile-foreground text/icons stay high-contrast
+     (never white-on-color, never a dark/black tile). */
+  --candy-red: #ff6b6b;
+  --candy-orange: #ffa94d;
+  --candy-yellow: #ffd43b;
+  --candy-green: #51cf66;
+  --candy-teal: #38d9d9;
+  --candy-blue: #4dabf7;
+  --candy-purple: #cc5de8;
+  --candy-pink: #ff6fa5;
+  --tile-foreground: #1a1523;
   --tile-disabled: #dcdde6;
   --tile-disabled-foreground: #5b6472;
 }
