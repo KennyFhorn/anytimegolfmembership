@@ -1,13 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { getRepository } from "@/lib/data";
 import { requireAdmin } from "@/lib/auth";
 import type { DayOfWeek } from "@/lib/types";
 import { DEFAULT_GAME_TYPE, GAME_TYPES } from "@/lib/game-types";
 
-export async function createLeagueNightAction(formData: FormData) {
+/**
+ * Same creation logic as admin/leagues' createLeagueNightAction, but scoped
+ * to the Calendar page: it revalidates and stays on /calendar afterward
+ * instead of redirecting into the admin console, since /calendar is meant
+ * to be usable as the source of record for scheduling, not just viewing.
+ */
+export async function createLeagueNightFromCalendarAction(formData: FormData) {
   await requireAdmin();
   const repo = await getRepository();
   const activeSeason = await repo.getActiveSeason();
@@ -25,7 +30,7 @@ export async function createLeagueNightAction(formData: FormData) {
   const dayIndex = new Date(`${date}T12:00:00`).getDay();
   const dayOfWeek: DayOfWeek = dayIndex === 4 ? "thursday" : "tuesday";
 
-  const night = await repo.createLeagueNight({
+  await repo.createLeagueNight({
     seasonId: activeSeason?.id ?? null,
     date,
     dayOfWeek,
@@ -36,6 +41,7 @@ export async function createLeagueNightAction(formData: FormData) {
     gameType,
   });
 
+  revalidatePath("/calendar");
   revalidatePath("/admin/leagues");
-  redirect(`/admin/leagues/${night.id}`);
+  revalidatePath("/dashboard");
 }

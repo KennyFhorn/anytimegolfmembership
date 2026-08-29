@@ -12,13 +12,19 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input, Label, Select } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { AddToCalendarButton } from "@/components/add-to-calendar-button";
 import { getRepository } from "@/lib/data";
+import { getCurrentProfile } from "@/lib/auth";
 import { cn, formatDate } from "@/lib/utils";
 import { googleCalendarUrl, outlookCalendarUrl } from "@/lib/ics";
+import { DEFAULT_GAME_TYPE, GAME_TYPES, gameTypeLabel } from "@/lib/game-types";
 import type { LeagueNight } from "@/lib/types";
+import { createLeagueNightFromCalendarAction } from "./actions";
 
 function parseMonthParam(v: string | undefined): Date {
   if (v && /^\d{4}-\d{2}$/.test(v)) {
@@ -33,6 +39,8 @@ const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default async function CalendarPage({ searchParams }: PageProps<"/calendar">) {
   const { month: monthParam } = await searchParams;
   const repo = await getRepository();
+  const profile = await getCurrentProfile();
+  const isAdmin = profile?.role === "admin";
   const nights = await repo.listLeagueNights();
 
   const monthAnchor = parseMonthParam(typeof monthParam === "string" ? monthParam : undefined);
@@ -55,10 +63,60 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Calendar</h1>
-        <p className="text-muted">Every Tuesday and Thursday night, on the books.</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Calendar</h1>
+          <p className="text-muted">Every Tuesday and Thursday night, on the books.</p>
+        </div>
       </div>
+
+      {isAdmin && (
+        <details className="group rounded-xl border border-border bg-surface">
+          <summary className="flex cursor-pointer list-none items-center gap-2 p-4 text-sm font-semibold text-foreground marker:content-none">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-candy-green text-tile-foreground transition-transform group-open:rotate-45">
+              <Plus className="h-4 w-4" />
+            </span>
+            Add a league night
+          </summary>
+          <div className="border-t border-border p-4 pt-4">
+            <form action={createLeagueNightFromCalendarAction} className="grid grid-cols-1 gap-3 sm:grid-cols-6">
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="date">Date</Label>
+                <Input id="date" name="date" type="date" required />
+              </div>
+              <div className="flex flex-col gap-1 sm:col-span-2">
+                <Label htmlFor="courseName">Course</Label>
+                <Input id="courseName" name="courseName" required placeholder="Augusta National (TrackMan)" />
+              </div>
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="coursePar">Par</Label>
+                <Input id="coursePar" name="coursePar" type="number" defaultValue={72} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="capacity">Capacity</Label>
+                <Input id="capacity" name="capacity" type="number" defaultValue={20} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="signupFee">Signup fee (USD)</Label>
+                <Input id="signupFee" name="signupFee" type="number" step="0.01" defaultValue={25} />
+              </div>
+              <div className="flex flex-col gap-1 sm:col-span-2">
+                <Label htmlFor="gameType">Game type</Label>
+                <Select id="gameType" name="gameType" defaultValue={DEFAULT_GAME_TYPE}>
+                  {GAME_TYPES.map((g) => (
+                    <option key={g.value} value={g.value}>
+                      {g.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <Button type="submit" className="sm:col-span-6 sm:w-fit">
+                Add to calendar
+              </Button>
+            </form>
+          </div>
+        </details>
+      )}
 
       <Card className="overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-candy-red via-candy-yellow to-candy-blue" />
@@ -152,34 +210,21 @@ function ScheduleRow({ night, past = false }: { night: LeagueNight; past?: boole
           <span className="text-xl font-extrabold">{format(parseISO(night.date), "d")}</span>
         </div>
         <div>
-          <p className="font-semibold">{night.courseName}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-semibold">{night.courseName}</p>
+            <Badge variant="brand">{gameTypeLabel(night.gameType)}</Badge>
+          </div>
           <p className="text-sm text-muted">
             {formatDate(night.date)} · {night.dayOfWeek === "tuesday" ? "Tuesday" : "Thursday"} night
           </p>
         </div>
       </Link>
       {!past && (
-        <div className="flex flex-wrap items-center gap-2">
-          <a
-            href={googleCalendarUrl(night)}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}
-          >
-            Google
-          </a>
-          <a
-            href={outlookCalendarUrl(night)}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}
-          >
-            Outlook
-          </a>
-          <a href={`/api/calendar/${night.id}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}>
-            <Download className="h-3.5 w-3.5" /> Apple / .ics
-          </a>
-        </div>
+        <AddToCalendarButton
+          googleUrl={googleCalendarUrl(night)}
+          outlookUrl={outlookCalendarUrl(night)}
+          icsUrl={`/api/calendar/${night.id}`}
+        />
       )}
     </Card>
   );

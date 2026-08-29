@@ -55,6 +55,7 @@ function toLeagueNight(row: Row): LeagueNight {
     capacity: row.capacity as number,
     signupFeeCents: row.signup_fee_cents as number,
     status: row.status as LeagueNight["status"],
+    gameType: (row.game_type as string | null) ?? "stroke_play",
   };
 }
 
@@ -239,6 +240,7 @@ export function createSupabaseRepository(client: SupabaseClient): Repository {
           course_par: input.coursePar,
           capacity: input.capacity,
           signup_fee_cents: input.signupFeeCents,
+          game_type: input.gameType ?? "stroke_play",
         })
         .select()
         .single();

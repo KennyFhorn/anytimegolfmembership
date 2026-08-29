@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } fro
 import { getRepository } from "@/lib/data";
 import { getCurrentProfile } from "@/lib/auth";
 import { formatCents, formatDate } from "@/lib/utils";
+import { gameTypeLabel } from "@/lib/game-types";
 import { registerForNight } from "./actions";
 
 export default async function LeagueNightPage({
@@ -39,7 +40,10 @@ export default async function LeagueNightPage({
       <div>
         <p className="text-sm text-muted">{night.dayOfWeek === "tuesday" ? "Tuesday" : "Thursday"} League Night</p>
         <h1 className="text-2xl font-bold tracking-tight">{formatDate(night.date)}</h1>
-        <p className="text-muted">{night.courseName} · Par {night.coursePar}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-muted">{night.courseName} · Par {night.coursePar}</p>
+          <Badge variant="brand">{gameTypeLabel(night.gameType)}</Badge>
+        </div>
       </div>
 
       {query.paid && (

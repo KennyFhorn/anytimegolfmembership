@@ -33,6 +33,7 @@ export interface NewLeagueNightInput {
   coursePar: number;
   capacity: number;
   signupFeeCents: number;
+  gameType?: string;
 }
 
 export interface ScoreInput {

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { getRepository } from "@/lib/data";
 import { getCurrentProfile } from "@/lib/auth";
+import { splitFullName } from "@/lib/utils";
 import { updateOwnProfileAction } from "./actions";
 
 export default async function AccountPage() {
@@ -24,6 +25,13 @@ export default async function AccountPage() {
       </Card>
     );
   }
+
+  // Rows created before first_name/last_name existed as their own columns
+  // (pre-migration-0004 signups) have them as null even though full_name is
+  // set — fall back to splitting it so the form isn't blank for those.
+  const fallbackName = !me.firstName && !me.lastName ? splitFullName(me.fullName) : null;
+  const firstName = me.firstName ?? fallbackName?.first ?? "";
+  const lastName = me.lastName ?? fallbackName?.last ?? "";
 
   return (
     <div className="flex flex-col gap-6">
@@ -57,10 +65,10 @@ export default async function AccountPage() {
             <FormSection title="Name">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label="First name" htmlFor="firstName">
-                  <Input id="firstName" name="firstName" required defaultValue={me.firstName ?? ""} />
+                  <Input id="firstName" name="firstName" required defaultValue={firstName} />
                 </Field>
                 <Field label="Last name" htmlFor="lastName">
-                  <Input id="lastName" name="lastName" required defaultValue={me.lastName ?? ""} />
+                  <Input id="lastName" name="lastName" required defaultValue={lastName} />
                 </Field>
               </div>
             </FormSection>

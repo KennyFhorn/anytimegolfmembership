@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { getRepository } from "@/lib/data";
-import { cn } from "@/lib/utils";
+import { cn, splitFullName } from "@/lib/utils";
 import { updateMemberAction } from "../actions";
 
 export default async function EditMemberPage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,6 +12,13 @@ export default async function EditMemberPage({ params }: { params: Promise<{ id:
   const repo = await getRepository();
   const member = await repo.getMember(id);
   if (!member) notFound();
+
+  // Rows created before first_name/last_name existed as their own columns
+  // have them as null even though full_name is set — fall back to
+  // splitting it so this form isn't blank for those.
+  const fallbackName = !member.firstName && !member.lastName ? splitFullName(member.fullName) : null;
+  const firstName = member.firstName ?? fallbackName?.first ?? "";
+  const lastName = member.lastName ?? fallbackName?.last ?? "";
 
   return (
     <div className="flex flex-col gap-6">
@@ -32,10 +39,10 @@ export default async function EditMemberPage({ params }: { params: Promise<{ id:
             <FormSection title="Name">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label="First name" htmlFor="firstName">
-                  <Input id="firstName" name="firstName" required defaultValue={member.firstName ?? ""} />
+                  <Input id="firstName" name="firstName" required defaultValue={firstName} />
                 </Field>
                 <Field label="Last name" htmlFor="lastName">
-                  <Input id="lastName" name="lastName" required defaultValue={member.lastName ?? ""} />
+                  <Input id="lastName" name="lastName" required defaultValue={lastName} />
                 </Field>
               </div>
             </FormSection>

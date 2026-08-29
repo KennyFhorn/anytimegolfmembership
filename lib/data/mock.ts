@@ -73,6 +73,7 @@ const leagueNights: LeagueNight[] = [
     capacity: 20,
     signupFeeCents: 2500,
     status: "completed",
+    gameType: "stroke_play",
   },
   {
     id: nextNightId,
@@ -84,6 +85,7 @@ const leagueNights: LeagueNight[] = [
     capacity: 20,
     signupFeeCents: 2500,
     status: "upcoming",
+    gameType: "scramble",
   },
 ];
 
@@ -251,7 +253,12 @@ export function createMockRepository(): Repository {
       );
     },
     async createLeagueNight(input: NewLeagueNightInput) {
-      const night: LeagueNight = { id: uid("night"), status: "upcoming", ...input };
+      const night: LeagueNight = {
+        id: uid("night"),
+        status: "upcoming",
+        gameType: "stroke_play",
+        ...input,
+      };
       leagueNights.push(night);
       return night;
     },

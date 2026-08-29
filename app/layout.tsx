@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Anytime Golf — League Nights",
+  title: "Anytime Golf Member App",
   description: "League night management for Anytime Golf's Trackman simulator studio.",
 };
 
