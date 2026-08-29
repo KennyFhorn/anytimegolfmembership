@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { computeHandicapIndex } from "../handicap";
 import { computeStandings, rankNightScores } from "../scoring";
-import type { Group, LeagueNight, Member, Prize, Registration, Score, Season } from "../types";
+import type { Group, LeagueNight, Member, Prize, Registration, Score, Season, UserRole } from "../types";
 import type {
   NewLeagueNightInput,
   NewMemberInput,
@@ -184,6 +184,32 @@ export function createSupabaseRepository(client: SupabaseClient): Repository {
       });
       if (error) throw error;
       return toMember(Array.isArray(data) ? data[0] : data);
+    },
+    async getMemberRole(memberId) {
+      const { data: member } = await client.from("members").select("profile_id").eq("id", memberId).maybeSingle();
+      const profileId = (member as Row | null)?.profile_id as string | null | undefined;
+      if (!profileId) return null;
+      const { data: profile } = await client.from("profiles").select("role").eq("id", profileId).maybeSingle();
+      const role = (profile as Row | null)?.role as UserRole | undefined;
+      return role ?? null;
+    },
+    async updateMemberRole(memberId, role) {
+      const { data: member, error: memberError } = await client
+        .from("members")
+        .select("profile_id")
+        .eq("id", memberId)
+        .maybeSingle();
+      if (memberError) throw memberError;
+      const profileId = (member as Row | null)?.profile_id as string | null | undefined;
+      if (!profileId) throw new Error("This member hasn't created a login yet");
+
+      // Security-definer RPC (migration 0013) — the only way profiles.role
+      // can change; also re-checks the caller is admin/owner server-side.
+      const { error } = await client.rpc("update_member_role", {
+        target_profile_id: profileId,
+        new_role: role,
+      });
+      if (error) throw error;
     },
 
     async listSeasons() {

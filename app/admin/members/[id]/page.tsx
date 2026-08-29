@@ -1,17 +1,19 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Crown, Shield, User as UserIcon } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { getRepository } from "@/lib/data";
 import { cn, splitFullName } from "@/lib/utils";
-import { updateMemberAction } from "../actions";
+import { updateMemberAction, updateMemberRoleAction } from "../actions";
 
 export default async function EditMemberPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const repo = await getRepository();
   const member = await repo.getMember(id);
   if (!member) notFound();
+  const currentRole = member.profileId ? await repo.getMemberRole(member.id) : null;
 
   // Rows created before first_name/last_name existed as their own columns
   // have them as null even though full_name is set — fall back to
@@ -28,6 +30,80 @@ export default async function EditMemberPage({ params }: { params: Promise<{ id:
         </Link>
         <h1 className="mt-1 text-2xl font-bold tracking-tight">Edit {member.fullName}</h1>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Role &amp; permissions</CardTitle>
+          <CardDescription>
+            Only admins and owners can change this. Users can only ever edit their own profile.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {!member.profileId ? (
+            <p className="text-sm text-muted">
+              This member hasn&apos;t created a login yet — role &amp; permissions apply once they sign up.
+            </p>
+          ) : (
+            <form action={updateMemberRoleAction.bind(null, member.id)} className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <label
+                  className={cn(
+                    "flex cursor-pointer items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl transition-all",
+                    "hover:border-white/20 hover:bg-white/[0.08]",
+                    "has-[:checked]:border-white/30 has-[:checked]:bg-white/[0.1] has-[:checked]:shadow-[0_10px_28px_-12px_var(--candy-blue)]",
+                  )}
+                >
+                  <input type="radio" name="role" value="member" defaultChecked={currentRole === "member"} className="sr-only" />
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-candy-blue text-tile-foreground">
+                    <UserIcon className="h-5 w-5" />
+                  </span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-bold">User</span>
+                    <span className="text-xs text-muted">Signs up for nights, tracks their own handicap.</span>
+                  </div>
+                </label>
+
+                <label
+                  className={cn(
+                    "flex cursor-pointer items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl transition-all",
+                    "hover:border-white/20 hover:bg-white/[0.08]",
+                    "has-[:checked]:border-white/30 has-[:checked]:bg-white/[0.1] has-[:checked]:shadow-[0_10px_28px_-12px_var(--candy-orange)]",
+                  )}
+                >
+                  <input type="radio" name="role" value="admin" defaultChecked={currentRole === "admin"} className="sr-only" />
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-candy-orange text-tile-foreground">
+                    <Shield className="h-5 w-5" />
+                  </span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-bold">Admin</span>
+                    <span className="text-xs text-muted">Full Coach console — members, nights, prizes, seasons.</span>
+                  </div>
+                </label>
+
+                <label
+                  className={cn(
+                    "flex cursor-pointer items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl transition-all",
+                    "hover:border-white/20 hover:bg-white/[0.08]",
+                    "has-[:checked]:border-white/30 has-[:checked]:bg-white/[0.1] has-[:checked]:shadow-[0_10px_28px_-12px_var(--candy-yellow)]",
+                  )}
+                >
+                  <input type="radio" name="role" value="owner" defaultChecked={currentRole === "owner"} className="sr-only" />
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-candy-yellow text-tile-foreground">
+                    <Crown className="h-5 w-5" />
+                  </span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-bold">Owner</span>
+                    <span className="text-xs text-muted">Everything Admin can, plus changing other members&apos; roles.</span>
+                  </div>
+                </label>
+              </div>
+              <Button type="submit" className="w-fit">
+                Update role
+              </Button>
+            </form>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

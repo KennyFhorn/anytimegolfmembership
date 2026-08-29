@@ -1,5 +1,6 @@
 import { computeHandicapIndex } from "../handicap";
 import { rankNightScores, computeStandings } from "../scoring";
+import { getDemoRole, setDemoRole } from "../demo-role";
 import type {
   Group,
   LeagueNight,
@@ -226,6 +227,19 @@ export function createMockRepository(): Repository {
       member.emergencyContactName = input.emergencyContactName ?? null;
       member.emergencyContactPhone = input.emergencyContactPhone ?? null;
       return member;
+    },
+    async getMemberRole(memberId) {
+      const member = members.find((m) => m.id === memberId);
+      if (!member?.profileId) return null;
+      // The demo identity's role is the one bit of shared mutable state
+      // (lib/demo-role.ts) — everyone else with a (fake) profileId defaults
+      // to "member" since this demo dataset only ever links member_1.
+      return member.profileId === "demo-admin-profile" ? getDemoRole() : "member";
+    },
+    async updateMemberRole(memberId, role) {
+      const member = members.find((m) => m.id === memberId);
+      if (!member?.profileId) throw new Error("This member hasn't created a login yet");
+      if (member.profileId === "demo-admin-profile") setDemoRole(role);
     },
 
     async listSeasons() {

@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
-import type { Profile } from "@/lib/types";
+import { hasCoachAccess, type Profile } from "@/lib/types";
 
 const COACH_LINKS = [
   { href: "/admin", label: "Overview" },
@@ -64,7 +64,7 @@ export function SiteHeader({
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
-  const isAdmin = profile?.role === "admin";
+  const isAdmin = hasCoachAccess(profile?.role);
   const inCoachArea = pathname.startsWith("/admin");
 
   async function handleSignOut() {
