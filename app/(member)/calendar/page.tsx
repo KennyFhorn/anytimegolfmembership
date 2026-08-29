@@ -14,10 +14,11 @@ import {
 } from "date-fns";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AddToCalendarButton } from "@/components/add-to-calendar-button";
+import { CancelDetailsButton } from "@/components/cancel-details-button";
 import { getRepository } from "@/lib/data";
 import { getCurrentProfile } from "@/lib/auth";
 import { cn, formatDate } from "@/lib/utils";
@@ -71,14 +72,20 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
       </div>
 
       {isAdmin && (
-        <details className="group rounded-xl border border-border bg-surface">
-          <summary className="flex cursor-pointer list-none items-center gap-2 p-4 text-sm font-semibold text-foreground marker:content-none">
+        <details className="group">
+          <summary
+            className={cn(
+              "inline-flex w-fit cursor-pointer list-none items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-5 py-2.5 text-sm font-bold text-foreground backdrop-blur-xl transition-all marker:content-none",
+              "shadow-[0_16px_32px_-14px_rgba(0,0,0,0.7),0_8px_20px_-8px_var(--candy-green),inset_0_1px_0_0_rgba(255,255,255,0.08)]",
+              "hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.08]",
+            )}
+          >
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-candy-green text-tile-foreground transition-transform group-open:rotate-45">
               <Plus className="h-4 w-4" />
             </span>
             Add a league night
           </summary>
-          <div className="border-t border-border p-4 pt-4">
+          <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl">
             <form action={createLeagueNightFromCalendarAction} className="grid grid-cols-1 gap-3 sm:grid-cols-6">
               <div className="flex flex-col gap-1">
                 <Label htmlFor="date">Date</Label>
@@ -122,9 +129,19 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                   ))}
                 </Select>
               </div>
-              <Button type="submit" className="sm:col-span-6 sm:w-fit">
-                Add to calendar
-              </Button>
+              <div className="flex flex-wrap gap-2 sm:col-span-6">
+                <button
+                  type="submit"
+                  className={cn(
+                    "inline-flex w-fit items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-5 py-2.5 text-sm font-bold text-foreground backdrop-blur-xl transition-all",
+                    "shadow-[0_16px_32px_-14px_rgba(0,0,0,0.7),0_8px_20px_-8px_var(--candy-green),inset_0_1px_0_0_rgba(255,255,255,0.08)]",
+                    "hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.08] active:translate-y-0",
+                  )}
+                >
+                  Add to calendar
+                </button>
+                <CancelDetailsButton>Cancel</CancelDetailsButton>
+              </div>
             </form>
           </div>
         </details>

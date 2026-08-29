@@ -40,15 +40,19 @@ Copy `.env.example` to `.env.local` and fill in:
    `0002_auth_linking.sql`, `0003_password_signup.sql`, `0004_member_profile_fields.sql`,
    `0005_member_self_service.sql`, `0006_backfill_member_names.sql`,
    `0007_league_night_game_type.sql`, `0008_courses.sql`, `0009_backfill_courses.sql`,
-   `0010_seed_trackman_courses.sql` — these create all tables, RLS policies, the auth triggers, a
-   starter "Fall 2026 League" season, the security-definer function members use to edit their own
-   profile from `/account`, a one-time backfill of first_name/last_name for any member row created
-   before 0004 added those columns, the `game_type` column league nights use for their round
-   format (see `lib/game-types.ts`), the self-growing `courses` table used for the Course
-   autocomplete on league night creation, a one-time backfill of that table from any league night
-   created before 0008 added it, and a ~556-course seed pulled from TrackMan's own published
-   course list (source CSV in `supabase/source-data/`, formatted as "Course Name (City, State,
-   Country)" — see the migration's header comment for the formatting rules).
+   `0010_seed_trackman_courses.sql`, `0011_seed_sample_members.sql` — these create all tables, RLS
+   policies, the auth triggers, a starter "Fall 2026 League" season, the security-definer function
+   members use to edit their own profile from `/account`, a one-time backfill of
+   first_name/last_name for any member row created before 0004 added those columns, the
+   `game_type` column league nights use for their round format (see `lib/game-types.ts`), the
+   self-growing `courses` table used for the Course autocomplete on league night creation, a
+   one-time backfill of that table from any league night created before 0008 added it, a
+   ~556-course seed pulled from TrackMan's own published course list (source CSV in
+   `supabase/source-data/`, formatted as "Course Name (City, State, Country)" — see the
+   migration's header comment for the formatting rules), and 20 fictional sample members
+   (`0011`, optional — see its header comment for how to remove them again) registered and paid
+   for whatever your next upcoming league night is, so you can click "Generate groups" on it and
+   see the handicap-balanced grouping actually run against real data.
 3. Copy **Project Settings → API → Project URL / anon public key / service_role key** into
    `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.
 4. **Authentication → Sign In / Providers → Email**: enable the Email provider, "Confirm email",
