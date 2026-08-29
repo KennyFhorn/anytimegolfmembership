@@ -2,12 +2,17 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SignupForm } from "@/components/auth/signup-form";
+import { getCurrentProfile } from "@/lib/auth";
 import { isDemoMode } from "@/lib/data";
 
 export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
   if (isDemoMode()) redirect("/login");
   const nextParam = (await searchParams).next;
   const next = typeof nextParam === "string" && nextParam.startsWith("/") ? nextParam : "/dashboard";
+
+  // Same as /login — don't show a signup form to someone already signed in.
+  const profile = await getCurrentProfile();
+  if (profile) redirect(next !== "/dashboard" ? next : profile.role === "admin" ? "/admin" : "/dashboard");
 
   return (
     <AuthShell
