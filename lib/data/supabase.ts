@@ -245,11 +245,20 @@ export function createSupabaseRepository(client: SupabaseClient): Repository {
         .select()
         .single();
       if (error) throw error;
+      // Grow the course library with whatever name was just used — best
+      // effort; a duplicate name (unique constraint) or any other failure
+      // here shouldn't block scheduling the night itself.
+      await client.from("courses").insert({ name: input.courseName });
       return toLeagueNight(data);
     },
     async setLeagueNightStatus(id, status) {
       const { error } = await client.from("league_nights").update({ status }).eq("id", id);
       if (error) throw error;
+    },
+    async listCourses() {
+      const { data, error } = await client.from("courses").select("name").order("name");
+      if (error) throw error;
+      return (data ?? []).map((row: Row) => row.name as string);
     },
 
     async listRegistrations(leagueNightId) {

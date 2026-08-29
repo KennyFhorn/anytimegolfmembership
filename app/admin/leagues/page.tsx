@@ -17,7 +17,7 @@ const STATUS_VARIANT = {
 
 export default async function AdminLeaguesPage() {
   const repo = await getRepository();
-  const nights = await repo.listLeagueNights();
+  const [nights, courses] = await Promise.all([repo.listLeagueNights(), repo.listCourses()]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,7 +29,10 @@ export default async function AdminLeaguesPage() {
       <Card>
         <CardHeader>
           <CardTitle>Schedule a night</CardTitle>
-          <CardDescription>Day of week is inferred from the date you pick.</CardDescription>
+          <CardDescription>
+            Day of week is inferred from the date you pick. Course suggests names used before —
+            type a new one to add it to the list.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={createLeagueNightAction} className="grid grid-cols-1 gap-3 sm:grid-cols-6">
@@ -39,7 +42,19 @@ export default async function AdminLeaguesPage() {
             </div>
             <div className="flex flex-col gap-1 sm:col-span-2">
               <Label htmlFor="courseName">Course</Label>
-              <Input id="courseName" name="courseName" required placeholder="Augusta National (TrackMan)" />
+              <Input
+                id="courseName"
+                name="courseName"
+                required
+                placeholder="Augusta National (TrackMan)"
+                list="course-options"
+                autoComplete="off"
+              />
+              <datalist id="course-options">
+                {courses.map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
             </div>
             <div className="flex flex-col gap-1">
               <Label htmlFor="coursePar">Par</Label>
